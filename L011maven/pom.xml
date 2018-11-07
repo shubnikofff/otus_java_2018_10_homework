@@ -19,9 +19,9 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
-        <com.google.guava.version>25.0-jre</com.google.guava.version>
+        <maven.compiler.source>10</maven.compiler.source>
+        <maven.compiler.target>10</maven.compiler.target>
+        <com.google.guava.version>23.0</com.google.guava.version>
     </properties>
 
     <dependencies>
@@ -33,6 +33,9 @@
     </dependencies>
 
     <build>
+
+        <finalName>${project.name}</finalName>
+
         <plugins>
 
             <plugin>
@@ -57,7 +60,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>Main</mainClass>
+                            <mainClass>ru.otus.Main</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
@@ -83,7 +86,7 @@
                     </descriptorRefs>
                     <archive>
                         <manifest>
-                            <mainClass>Main</mainClass>
+                            <mainClass>ru.otus.Main</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
@@ -102,20 +105,18 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <proguardVersion>6.0.3</proguardVersion>
-                    <outjar>${project.build.finalName}-obfuscated.jar</outjar>
-                    <options>
-                        <option>-target 1.8</option>
-                        <option>-allowaccessmodification</option>
-                        <option>-keep public class * { public static void main(java.lang.String[]); }</option>
-                        <option>-keepattributes InnerClasses,Signature,LineNumberTable,*Annotation*,EnclosingMethod</option>
-                        <option>-keepclassmembers enum * { public static **[] values(); public static ** valueOf(java.lang.String); }</option>
-                    </options>
                     <obfuscate>true</obfuscate>
+                    <proguardVersion>6.0.3</proguardVersion>
+                    <injar>${project.name}-jar-with-dependencies.jar</injar>
+                    <outjar>${project.name}-obfuscated.jar</outjar>
+                    <outputDirectory>${project.build.directory}</outputDirectory>
+                    <options>
+                        <option>-keep public class ru.otus.Main {public static void main(java.lang.String[]);}</option>
+                        <option>-dontwarn</option>
+                    </options>
                     <includeDependency>true</includeDependency>
                     <libs>
-                        <lib>${java.home}/lib/jce.jar</lib>
-                        <lib>${java.home}/lib/rt.jar</lib>
+                        <lib>./proguard/java.base.jmod</lib>
                     </libs>
                 </configuration>
                 <dependencies>
