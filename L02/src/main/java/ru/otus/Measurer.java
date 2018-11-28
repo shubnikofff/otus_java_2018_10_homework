@@ -54,15 +54,15 @@ class Measurer {
         return (getMem() - memBeforeCreate) / array.length;
     }
 
-    static <T> long measure(Supplier<T> objectGetter) {
-        System.out.println("Measure " + objectGetter.get().getClass().getName() + "...");
+    static <T> long measure(Supplier<T> objectGetter, int arraySize) {
+        System.out.println("Measure " + objectGetter.get().getClass().getName() + " with " + arraySize + " elements...");
 
         long memBeforeCreate = getMem();
         System.out.println("Memory: " + memBeforeCreate);
 
-        Object[] array = new Object[ARRAY_SIZE];
+        Object[] array = new Object[arraySize];
         long memAfterCreate = getMem();
-        System.out.println("Ref size: " + (memAfterCreate - memBeforeCreate) / ARRAY_SIZE);
+        System.out.println("Ref size: " + (memAfterCreate - memBeforeCreate) / arraySize);
 
         for (int i = 0; i < array.length; i++) {
             array[i] = objectGetter.get();
