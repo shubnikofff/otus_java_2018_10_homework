@@ -5,18 +5,27 @@ import java.util.Collections;
 public class MyArrayListDemo {
 
     public static void main(String[] args) {
-        MyArrayList<String> firstList = new MyArrayList();
-        MyArrayList<String> secondList = new MyArrayList(103);
+        MyArrayList<Integer> firstList = new MyArrayList<>();
+        MyArrayList<Integer> secondList = new MyArrayList<>(100);
 
-        for (int i = 0; i < 100; i++) {
-            firstList.add("string element");
+        System.out.println("First list initialized:\n" + firstList);
+        System.out.println("Second list initialized:\n" + secondList + "\n");
+
+        for (int i = 100; i > 0; i--) {
+            firstList.add(i);
+            secondList.add(i * 2);
         }
 
-        Collections.addAll(firstList, "more string element", "one more string element", "and one more...");
-        Collections.copy(secondList, firstList);
-        Collections.sort(secondList);
+        System.out.println("First list filled:\n" + firstList);
+        System.out.println("Second list filled:\n" + secondList + "\n");
 
-        System.out.println("First list:\n" + firstList);
-        System.out.println("Second list:\n" + secondList);
+        Collections.addAll(secondList, 555, 666, 777, 888, 999);
+        System.out.println("Add 5 elements to second list:\n" + secondList + "\n");
+
+        Collections.copy(secondList, firstList);
+        System.out.println("Copy first list to second list:\n" + secondList + "\n");
+
+        Collections.sort(secondList);
+        System.out.println("Sorted second list:\n" + secondList);
     }
 }

@@ -8,21 +8,25 @@ public class MyArrayList<T> implements List<T> {
 
     private Object[] store;
 
+    private static final int DEFAULT_CAPACITY = 10;
+
     MyArrayList() {
-        this(0);
+        this(DEFAULT_CAPACITY);
     }
 
-    MyArrayList(int size) {
-        this.size = size;
-        store = new Object[size];
+    MyArrayList(int capacity) {
+        store = new Object[capacity];
     }
 
-    private void extendStore(int newSize) {
-        store = Arrays.copyOf(store, newSize);
+    private void extendStore(int newCapacity) {
+        store = Arrays.copyOf(store, newCapacity);
     }
 
     public boolean add(T t) {
-        extendStore(size + 1);
+        int storeLength = store.length;
+        if (storeLength < size + 1) {
+            extendStore(storeLength + storeLength / 2);
+        }
         store[size++] = t;
         return true;
     }
@@ -58,7 +62,7 @@ public class MyArrayList<T> implements List<T> {
     }
 
     public Object[] toArray() {
-        return store;
+        return Arrays.copyOf(store, size);
     }
 
     public <T1> T1[] toArray(T1[] a) {
@@ -122,6 +126,6 @@ public class MyArrayList<T> implements List<T> {
     }
 
     public String toString() {
-        return Arrays.toString(store) + ", size: " + size;
+        return Arrays.toString(this.toArray()) + ", size: " + size;
     }
 }
