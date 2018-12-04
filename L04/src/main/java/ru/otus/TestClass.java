@@ -1,29 +1,31 @@
-public class ClassTest {
+package ru.otus;
+
+class TestClass {
     @Before
     void beforeEach() {
-        System.out.println("Before test");
+        System.out.println("ru.otus.Before test");
     }
 
     @After
     void afterEach() {
-        System.out.println("After test\n");
+        System.out.println("ru.otus.After test\n");
     }
 
     @Test
     boolean isEqual(int a, int b) {
-        System.out.println("Test is equal");
+        System.out.println("ru.otus.Test is equal");
         return a == b;
     }
 
     @Test
     boolean isGreater(int a, int b) {
-        System.out.println("Test is greater");
+        System.out.println("ru.otus.Test is greater");
         return a > b;
     }
 
     @Test
     boolean isLess(int a, int b) {
-        System.out.println("Test is less");
+        System.out.println("ru.otus.Test is less");
         return a < b;
     }
 }
