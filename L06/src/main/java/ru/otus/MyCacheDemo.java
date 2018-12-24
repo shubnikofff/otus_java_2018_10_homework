@@ -1,7 +1,5 @@
 package ru.otus;
 
-import java.util.Optional;
-
 /**
  * VM options: -Xmx256m -Xms256m
  */
@@ -14,16 +12,8 @@ public class MyCacheDemo {
 
     private void demo() {
         Cache<Integer, User> cache = new MyCache<>();
-        Listener<Integer, User> firstListener =
-                ((key, value, action) -> {
-                    Optional<User> nullableValue = Optional.ofNullable(value);
-                    System.out.println(nullableValue
-                            .map(user -> action + ": id: " + user.getId() + " " + user.getName())
-                            .orElse(action + ": User#" + key + " is dead :("));
-                });
-
-        cache.addListener(firstListener);
-
+        MyListener<Integer, User> listener = new MyListener<>();
+        cache.addListener(listener);
 
         for (int i = 0; i < CACHE_SIZE; i++) {
             var user = new User(i, "User#" + i);
@@ -40,6 +30,10 @@ public class MyCacheDemo {
             cache.remove(i);
         }
 
-        cache.removeListener(firstListener);
+//      Try to get or remove not existing values
+        cache.remove(500);
+        cache.get(500);
+
+        cache.removeListener(listener);
     }
 }

@@ -3,12 +3,12 @@ package ru.otus;
 class User {
     private Integer id;
     private String name;
-    private byte[] bigData;
+    private byte[] payload;
 
     User(Integer id, String name) {
         this.id = id;
         this.name = name;
-        this.bigData = new byte[1024*1024*56];
+        this.payload = new byte[1024*1024*56];
     }
 
     Integer getId() {
@@ -17,5 +17,10 @@ class User {
 
     String getName() {
         return name;
+    }
+
+    @Override
+    public String toString() {
+        return getName();
     }
 }

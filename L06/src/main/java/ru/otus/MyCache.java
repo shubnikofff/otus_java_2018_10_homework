@@ -3,6 +3,7 @@ package ru.otus;
 import java.lang.ref.SoftReference;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Optional;
 
 public class MyCache<K, V> implements Cache<K, V> {
     private static final String ACTION_PUT = "PUT";
@@ -23,12 +24,17 @@ public class MyCache<K, V> implements Cache<K, V> {
     }
 
     public void remove(K key) {
-        var value = store.remove(key);
-        fireListeners(key, value.get(), ACTION_REMOVE);
+        Optional<SoftReference<V>> softReference = Optional.ofNullable(store.remove(key));
+        fireListeners(
+                key,
+                softReference.map(SoftReference::get).orElse(null),
+                ACTION_REMOVE
+        );
     }
 
     public V get(K key) {
-        var value = store.get(key).get();
+        Optional<SoftReference<V>> softReference = Optional.ofNullable(store.get(key));
+        V value = softReference.map(SoftReference::get).orElse(null);
         fireListeners(key, value, ACTION_GET);
         return value;
     }
@@ -42,6 +48,13 @@ public class MyCache<K, V> implements Cache<K, V> {
     }
 
     private void fireListeners(K key, V value, String action) {
-        listeners.forEach(listener -> listener.notify(key, value, action));
+        // If some listener throws exception, program will not stop
+        listeners.forEach(listener -> {
+            try {
+                listener.notify(key, value, action);
+            } catch (Exception e) {
+                System.out.println(e);
+            }
+        });
     }
 }
