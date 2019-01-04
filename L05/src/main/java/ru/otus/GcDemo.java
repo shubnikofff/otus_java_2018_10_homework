@@ -1,5 +1,16 @@
 package ru.otus;
 
+import com.sun.management.GarbageCollectionNotificationInfo;
+import javax.management.NotificationEmitter;
+import javax.management.NotificationFilter;
+import javax.management.NotificationListener;
+import javax.management.openmbean.CompositeData;
+import java.lang.management.GarbageCollectorMXBean;
+import java.lang.management.ManagementFactory;
+import java.util.HashMap;
+import java.util.Timer;
+import java.util.TimerTask;
+
 /*
 Program arguments:
 - benchMarkCapacity: 5000
@@ -9,39 +20,49 @@ GC param:
     -Xms512m
     -Xmx512m
 
-Results:
+Output:
     -XX:+UseParallelGC
-        PS MarkSweep: 0
-        PS Scavenge: 1416
-        GC has been run 157 times per minute
-        Total time: 558451ms
+        PS MarkSweep (run quantity: 0, duration: 0ms)
+        PS Scavenge (run quantity: 0, duration: 0ms)
+        PS MarkSweep (run quantity: 0, duration: 0ms)
+        PS Scavenge (run quantity: 157, duration: 111ms)
+        PS MarkSweep (run quantity: 0, duration: 0ms)
+        PS Scavenge (run quantity: 156, duration: 92ms)
+        PS MarkSweep (run quantity: 0, duration: 0ms)
+        PS Scavenge (run quantity: 156, duration: 87ms)
+        PS MarkSweep (run quantity: 0, duration: 0ms)
+        PS Scavenge (run quantity: 157, duration: 90ms)
+        ...
 
     -XX:+UseG1GC
-        G1 Young Generation: 789
-        G1 Old Generation: 0
-        GC has been run 87 times per minute
-        Total time: 565343ms
+        G1 Young Generation (run quantity: 0, duration: 0ms)
+        G1 Old Generation (run quantity: 0, duration: 0ms)
+        G1 Young Generation (run quantity: 87, duration: 121ms)
+        G1 Old Generation (run quantity: 0, duration: 0ms)
+        G1 Young Generation (run quantity: 87, duration: 83ms)
+        G1 Old Generation (run quantity: 0, duration: 0ms)
+        G1 Young Generation (run quantity: 86, duration: 85ms)
+        G1 Old Generation (run quantity: 0, duration: 0ms)
+        ...
 
     -XX:+UseSerialGC
-        Copy: 1756
-        MarkSweepCompact: 0
-        GC has been run 146 times per minute
-        Total time: 767173ms
+        Copy (run quantity: 0, duration: 0ms)
+        MarkSweepCompact (run quantity: 0, duration: 0ms)
+        Copy (run quantity: 193, duration: 126ms)
+        MarkSweepCompact (run quantity: 0, duration: 0ms)
+        Copy (run quantity: 194, duration: 71ms)
+        MarkSweepCompact (run quantity: 0, duration: 0ms)
+        Copy (run quantity: 193, duration: 79ms)
+        MarkSweepCompact (run quantity: 0, duration: 0ms)
+        Copy (run quantity: 194, duration: 78ms)
+        MarkSweepCompact (run quantity: 0, duration: 0ms)
+        ...
 
 Вывод:
-    По скорости выполнения программы лучшими стали ParallelGC и G1GC. Но колличество запусков в минуту у G1 оказалось
-    вдвое меньше чем у Parallel. Исходя из этого можно сделать вывод, что лучшим при данной конфигурации был G1.
+    По продолжительности сборки все 3 gc показали примерно одинаковое время, немного впереди остальных оказался
+    SerialGC. G1 запускался примерно в два раза меньше чем сотальные. Основываясь на последнем факте, я могу сделать
+    вывод, что G1 оказался лучшим.
  */
-
-import com.sun.management.GarbageCollectionNotificationInfo;
-import javax.management.NotificationEmitter;
-import javax.management.NotificationFilter;
-import javax.management.NotificationListener;
-import javax.management.openmbean.CompositeData;
-import java.lang.management.GarbageCollectorMXBean;
-import java.lang.management.ManagementFactory;
-import java.util.HashMap;
-import java.util.concurrent.TimeUnit;
 
 public class GcDemo {
     public static void main(String[] args) throws InterruptedException {
@@ -51,36 +72,33 @@ public class GcDemo {
         var gcRunCounter = logGcEvents();
         var benchmark = new Benchmark(benchMarkCapacity);
 
-        long beginTime = System.currentTimeMillis();
+        TimerTask task = new TimerTask() {
+            @Override
+            public void run() {
+                gcRunCounter.forEach((gcName, runQuantity) -> {
+                    System.out.println(gcName + " (" + runQuantity + ")");
+                    gcRunCounter.replace(gcName, new GcStat());
+                });
+            }
+        };
+
+        Timer timer = new Timer();
+        timer.scheduleAtFixedRate(task, 0, 60 * 1000);
+
         benchmark.fill(benchMarkQuantity);
-        long totalTime = System.currentTimeMillis() - beginTime;
-        long totalTimeInMinutes = TimeUnit.MILLISECONDS.toMinutes(totalTime);
-
-        int totalRunQuantity = 0;
-        for(int runQuantity: gcRunCounter.values()) {
-            totalRunQuantity += runQuantity;
-        }
-
-        var gcRunQuantityPerMinute = totalTimeInMinutes != 0 ? totalRunQuantity / totalTimeInMinutes : totalRunQuantity;
-
-        gcRunCounter.forEach((gcName, runQuantity) ->
-            System.out.println(gcName + ": " + runQuantity)
-        );
-
-        System.out.println("GC has been run " + gcRunQuantityPerMinute + " times per minute");
-        System.out.println("Total time: " + totalTime + "ms");
     }
 
-    private static HashMap<String, Integer> logGcEvents() {
-        HashMap<String, Integer> runCounter = new HashMap<>();
+    private static HashMap<String, GcStat> logGcEvents() {
+        HashMap<String, GcStat> runCounter = new HashMap<>();
 
         for (GarbageCollectorMXBean gcMxBean : ManagementFactory.getGarbageCollectorMXBeans()) {
-            runCounter.put(gcMxBean.getName(), 0);
+            runCounter.put(gcMxBean.getName(), new GcStat());
 
             NotificationListener listener = (notification, handback) -> {
                 var info = GarbageCollectionNotificationInfo.from((CompositeData) notification.getUserData());
-                Integer runQuantity = runCounter.get(info.getGcName());
-                runCounter.replace(info.getGcName(), runQuantity, runQuantity + 1);
+                GcStat gcStat = runCounter.get(info.getGcName());
+                gcStat.increaseRunQuantity(1);
+                gcStat.increaseDuration(info.getGcInfo().getDuration());
             };
 
             NotificationFilter filter = (notification) ->
