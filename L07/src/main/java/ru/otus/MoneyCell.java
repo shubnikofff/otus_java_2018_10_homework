@@ -1,28 +1,20 @@
 package ru.otus;
 
-import ru.otus.money.Money;
+class MoneyCell {
+    private int amount = 0;
 
-public class MoneyCell {
-    private short nominal;
-    private int amount;
-
-    public MoneyCell(short nominal) {
-        this.nominal = nominal;
-    }
-
-    public int getNominal() {
-        return nominal;
-    }
-
-    public void addMoney(Money money) throws IllegalArgumentException {
-        if (money.getNominal() != nominal) {
-            throw new IllegalArgumentException("Attempt to put " + money.getNominal()
-                    + " money to the " + nominal + " cell");
-        }
+    void putMoney() {
         amount++;
     }
 
-    public void giveMoney(int amount) {
+    void giveMoney(int amount) throws Exception {
+        if (this.amount == 0) {
+            throw new Exception("Cell is empty");
+        }
+        this.amount -= amount;
+    }
 
+    int getAmount() {
+        return amount;
     }
 }
