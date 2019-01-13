@@ -1,11 +1,10 @@
 package ru.otus.money;
 
 public class OneEuro implements Money {
-    private static final short NOMINAL = 1;
 
     @Override
     public short getNominal() {
-        return NOMINAL;
+        return Money.ONE_EURO;
     }
 
     @Override

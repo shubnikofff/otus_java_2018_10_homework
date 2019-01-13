@@ -6,10 +6,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class Atm {
+class Atm {
     private HashMap<Short, MoneyCell> moneyCells;
 
-    public Atm(short[] possibleNominals) {
+    Atm(short[] possibleNominals) {
+        System.out.println("Create ATM...");
         moneyCells = new HashMap<>(possibleNominals.length);
         for (short nominal : possibleNominals) {
             moneyCells.put(nominal, new MoneyCell());
