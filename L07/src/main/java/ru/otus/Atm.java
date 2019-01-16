@@ -1,5 +1,7 @@
 package ru.otus;
 
+import ru.otus.collector.FiveEuroCollector;
+import ru.otus.collector.TwentyEuroCollector;
 import ru.otus.money.Money;
 import ru.otus.operation.AcceptMoney;
 import ru.otus.operation.OperationExecutor;
@@ -25,6 +27,16 @@ class Atm {
             AcceptMoney acceptMoney = new AcceptMoney(cells, banknote);
             operationExecutor.addOperation(acceptMoney);
         });
+        operationExecutor.executeOperations();
+    }
+
+    void giveMoney(int amount) throws Exception {
+        System.out.println("Try to give " + amount + " euro...");
+        OperationExecutor operationExecutor = new OperationExecutor();
+        FiveEuroCollector fiveEuroCollector = new FiveEuroCollector(cells);
+        TwentyEuroCollector twentyEuroCollector = new TwentyEuroCollector(cells);
+        twentyEuroCollector.setNext(fiveEuroCollector);
+        twentyEuroCollector.process(amount, operationExecutor);
         operationExecutor.executeOperations();
     }
 
