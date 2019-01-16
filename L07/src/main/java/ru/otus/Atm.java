@@ -1,38 +1,37 @@
 package ru.otus;
 
 import ru.otus.money.Money;
+import ru.otus.operation.AcceptMoney;
+import ru.otus.operation.OperationExecutor;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 class Atm {
-    private HashMap<Short, MoneyCell> moneyCells;
+    private HashMap<Short, AtmCell> cells;
 
     Atm(short[] possibleNominals) {
         System.out.println("Create ATM...");
-        moneyCells = new HashMap<>(possibleNominals.length);
+        cells = new HashMap<>(possibleNominals.length);
         for (short nominal : possibleNominals) {
-            moneyCells.put(nominal, new MoneyCell());
+            cells.put(nominal, new AtmCell());
         }
     }
 
     void putMoney(List<Money> money) {
+        OperationExecutor operationExecutor = new OperationExecutor();
         money.forEach(banknote -> {
-            if (moneyCells.containsKey(banknote.getNominal())) {
-                moneyCells.get(banknote.getNominal()).putMoney();
-                System.out.println("Putted " + banknote);
-            } else {
-                System.out.println("Nominal " + banknote.getNominal() + " is unsupported");
-            }
-
+            AcceptMoney acceptMoney = new AcceptMoney(cells, banknote);
+            operationExecutor.addOperation(acceptMoney);
         });
+        operationExecutor.executeOperations();
     }
 
     int getBalance() {
         int balance = 0;
 
-        for (Map.Entry<Short, MoneyCell> entry : moneyCells.entrySet()) {
+        for (Map.Entry<Short, AtmCell> entry : cells.entrySet()) {
             balance += entry.getKey() * entry.getValue().getAmount();
         }
 

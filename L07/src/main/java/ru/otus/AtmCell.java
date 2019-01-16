@@ -1,17 +1,17 @@
 package ru.otus;
 
-class MoneyCell {
+public class AtmCell {
     private int amount = 0;
 
-    void putMoney() {
+    public void put() {
         amount++;
     }
 
-    void giveMoney(int amount) throws Exception {
-        if (this.amount == 0) {
+    public void pop() throws Exception {
+        if (amount == 0) {
             throw new Exception("Cell is empty");
         }
-        this.amount -= amount;
+        amount--;
     }
 
     int getAmount() {

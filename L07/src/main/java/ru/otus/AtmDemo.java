@@ -16,7 +16,7 @@ public class AtmDemo {
         return new Atm(new short[]{
                 Money.ONE_EURO,
                 Money.FIVE_EURO,
-                Money.TEN_EURO,
+//                Money.TEN_EURO,
                 Money.TWENTY_EURO,
                 Money.FIFTY_EURO,
                 Money.ONE_HUNDRED_EURO,
