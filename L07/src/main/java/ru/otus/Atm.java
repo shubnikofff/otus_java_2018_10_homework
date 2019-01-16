@@ -1,6 +1,7 @@
 package ru.otus;
 
 import ru.otus.collector.FiveEuroCollector;
+import ru.otus.collector.OneHundredCollector;
 import ru.otus.collector.TwentyEuroCollector;
 import ru.otus.money.Money;
 import ru.otus.operation.AcceptMoney;
@@ -32,26 +33,28 @@ class Atm {
     }
 
     void giveMoney(int amount) throws Exception {
-        System.out.println("Try to give money in the amount of " + amount + "...");
+        System.out.println("Try to give amount: " + amount + "...");
 
-        OperationExecutor operationExecutor = new OperationExecutor();
+        var operationExecutor = new OperationExecutor();
 
-        FiveEuroCollector fiveEuroCollector = new FiveEuroCollector(cells);
-        TwentyEuroCollector twentyEuroCollector = new TwentyEuroCollector(cells);
+        var fiveEuroCollector = new FiveEuroCollector(cells);
+        var twentyEuroCollector = new TwentyEuroCollector(cells);
+        var oneHundredCollector = new OneHundredCollector(cells);
 
+        oneHundredCollector.setNext(twentyEuroCollector);
         twentyEuroCollector.setNext(fiveEuroCollector);
-        twentyEuroCollector.process(amount, operationExecutor);
+        oneHundredCollector.process(amount, operationExecutor);
 
         operationExecutor.executeOperations();
     }
 
-    int getBalance() {
+    void printBalance() {
         int balance = 0;
 
         for (Map.Entry<Short, Stack<Money>> entry : cells.entrySet()) {
             balance += entry.getKey() * entry.getValue().size();
         }
 
-        return balance;
+        System.out.println("Balance: " + balance + "\u20ac");
     }
 }

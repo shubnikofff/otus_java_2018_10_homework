@@ -17,21 +17,15 @@ abstract public class MoneyCollector {
         int remainAmount = collectMoney(amount, operationExecutor);
 
         if (remainAmount == 0) {
-            System.out.println("Amount collected");
+            System.out.println("Amount has been collected!");
             return;
         }
-
-        printRemainAmount(remainAmount);
 
         if (getNext() != null) {
             getNext().process(remainAmount, operationExecutor);
         } else {
             throw new Exception("Required amount can't be collected");
         }
-    }
-
-    private void printRemainAmount(int amount) {
-        System.out.println("It remains to process: " + amount);
     }
 
     abstract int collectMoney(int amount, OperationExecutor operationExecutor);

@@ -20,7 +20,7 @@ public class AcceptMoney implements Operation {
             atmCells.get(money.getNominal()).push(money);
             System.out.println("+ Accepted " + money);
         } else {
-            System.out.println("! Can't accept " + money + " ATM doesn't work with that");
+            System.out.println("! Can't accept " + money + " because ATM doesn't work with that nominal");
         }
     }
 }

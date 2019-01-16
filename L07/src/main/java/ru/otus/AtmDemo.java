@@ -8,10 +8,15 @@ public class AtmDemo {
     public static void main(String[] args) throws Exception {
         Atm atm = createAtm();
         ArrayList<Money> money = prepareMoney();
+
         atm.putMoney(money);
-        System.out.println("Balance: " + atm.getBalance() + "\u20ac");
-        atm.giveMoney(30);
-        System.out.println("Balance: " + atm.getBalance() + "\u20ac");
+        atm.printBalance();
+
+        atm.giveMoney(130);
+        atm.printBalance();
+
+        atm.giveMoney(133);
+        atm.printBalance();
     }
 
     private static Atm createAtm() {
