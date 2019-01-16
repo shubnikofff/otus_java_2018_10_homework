@@ -9,15 +9,16 @@ import ru.otus.operation.OperationExecutor;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Stack;
 
 class Atm {
-    private HashMap<Short, AtmCell> cells;
+    private HashMap<Short, Stack<Money>> cells;
 
     Atm(short[] possibleNominals) {
         System.out.println("Create ATM...");
         cells = new HashMap<>(possibleNominals.length);
         for (short nominal : possibleNominals) {
-            cells.put(nominal, new AtmCell());
+            cells.put(nominal, new Stack<>());
         }
     }
 
@@ -31,20 +32,24 @@ class Atm {
     }
 
     void giveMoney(int amount) throws Exception {
-        System.out.println("Try to give " + amount + " euro...");
+        System.out.println("Try to give money in the amount of " + amount + "...");
+
         OperationExecutor operationExecutor = new OperationExecutor();
+
         FiveEuroCollector fiveEuroCollector = new FiveEuroCollector(cells);
         TwentyEuroCollector twentyEuroCollector = new TwentyEuroCollector(cells);
+
         twentyEuroCollector.setNext(fiveEuroCollector);
         twentyEuroCollector.process(amount, operationExecutor);
+
         operationExecutor.executeOperations();
     }
 
     int getBalance() {
         int balance = 0;
 
-        for (Map.Entry<Short, AtmCell> entry : cells.entrySet()) {
-            balance += entry.getKey() * entry.getValue().getAmount();
+        for (Map.Entry<Short, Stack<Money>> entry : cells.entrySet()) {
+            balance += entry.getKey() * entry.getValue().size();
         }
 
         return balance;

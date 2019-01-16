@@ -1,15 +1,15 @@
 package ru.otus.operation;
 
-import ru.otus.AtmCell;
 import ru.otus.money.Money;
 
 import java.util.HashMap;
+import java.util.Stack;
 
 public class AcceptMoney implements Operation {
-    private HashMap<Short, AtmCell> atmCells;
+    private HashMap<Short, Stack<Money>> atmCells;
     private Money money;
 
-    public AcceptMoney(HashMap<Short, AtmCell> atmCells, Money money) {
+    public AcceptMoney(HashMap<Short, Stack<Money>> atmCells, Money money) {
         this.atmCells = atmCells;
         this.money = money;
     }
@@ -17,7 +17,7 @@ public class AcceptMoney implements Operation {
     @Override
     public void execute() {
         if (atmCells.containsKey(money.getNominal())) {
-            atmCells.get(money.getNominal()).put();
+            atmCells.get(money.getNominal()).push(money);
             System.out.println("+ Accepted " + money);
         } else {
             System.out.println("! Can't accept " + money + " ATM doesn't work with that");

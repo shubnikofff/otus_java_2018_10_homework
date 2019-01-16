@@ -9,6 +9,6 @@ public class FiveEuro implements Money {
 
     @Override
     public String toString() {
-        return "Five euro";
+        return 5 + "\u20ac";
     }
 }

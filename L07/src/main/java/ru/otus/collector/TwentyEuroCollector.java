@@ -1,16 +1,16 @@
 package ru.otus.collector;
 
-import ru.otus.AtmCell;
 import ru.otus.money.Money;
 import ru.otus.operation.GiveMoney;
 import ru.otus.operation.OperationExecutor;
 
 import java.util.HashMap;
+import java.util.Stack;
 
 public class TwentyEuroCollector extends MoneyCollector {
-    private HashMap<Short, AtmCell> atmCells;
+    private HashMap<Short, Stack<Money>> atmCells;
 
-    public TwentyEuroCollector(HashMap<Short, AtmCell> atmCells) {
+    public TwentyEuroCollector(HashMap<Short, Stack<Money>> atmCells) {
         this.atmCells = atmCells;
     }
 

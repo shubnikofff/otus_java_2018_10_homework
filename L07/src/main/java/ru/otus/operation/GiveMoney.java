@@ -1,29 +1,26 @@
 package ru.otus.operation;
 
-import ru.otus.AtmCell;
+import ru.otus.money.Money;
 
 import java.util.HashMap;
+import java.util.Stack;
 
 public class GiveMoney implements Operation {
-    private short nominal;
-    private HashMap<Short, AtmCell> atmCells;
+    private Short nominal;
+    private HashMap<Short, Stack<Money>> atmCells;
 
-    public GiveMoney(short nominal, HashMap<Short, AtmCell> atmCells) {
+    public GiveMoney(Short nominal, HashMap<Short, Stack<Money>> atmCells) {
         this.nominal = nominal;
         this.atmCells = atmCells;
     }
 
     @Override
     public void execute() {
-        try {
-            if (atmCells.containsKey(nominal)) {
-                atmCells.get(nominal).pop();
-                System.out.println("- Give out " + nominal);
-            } else {
-                System.out.println("There is no cell with nominal " + nominal);
-            }
-        } catch (Exception e) {
-            System.out.println(nominal + ": "  + e.getMessage());
+        if (atmCells.containsKey(nominal)) {
+            Money money = atmCells.get(nominal).pop();
+            System.out.println("- Give out " + money);
+        } else {
+            System.out.println("There is no cell with nominal " + nominal);
         }
     }
 }
