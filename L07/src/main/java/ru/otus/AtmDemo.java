@@ -24,6 +24,11 @@ public class AtmDemo {
             System.out.println(e.toString());
             atm.printBalance();
         }
+
+        atm.putMoney(money);
+        atm.printBalance();
+        atm.giveAllMoney();
+        atm.printBalance();
     }
 
     private static Atm createAtm() {

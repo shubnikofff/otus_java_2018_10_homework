@@ -5,6 +5,7 @@ import ru.otus.collector.OneHundredCollector;
 import ru.otus.collector.TwentyEuroCollector;
 import ru.otus.money.Money;
 import ru.otus.operation.AcceptMoney;
+import ru.otus.operation.GiveMoney;
 import ru.otus.operation.OperationExecutor;
 
 import java.util.HashMap;
@@ -16,7 +17,7 @@ class Atm {
     private HashMap<Short, Stack<Money>> cells;
 
     Atm(short[] possibleNominals) {
-        System.out.println("Create ATM...");
+        System.out.println("\nCreate ATM...");
         cells = new HashMap<>(possibleNominals.length);
         for (short nominal : possibleNominals) {
             cells.put(nominal, new Stack<>());
@@ -24,6 +25,7 @@ class Atm {
     }
 
     void putMoney(List<Money> money) {
+        System.out.println("\nPut money...");
         OperationExecutor operationExecutor = new OperationExecutor();
         money.forEach(banknote -> {
             AcceptMoney acceptMoney = new AcceptMoney(cells, banknote);
@@ -33,7 +35,7 @@ class Atm {
     }
 
     void giveMoney(int amount) throws ImpossibleGiveMoneyException {
-        System.out.println("Try to give amount: " + amount + "...");
+        System.out.println("\nTry to give amount: " + amount + "...");
 
         var operationExecutor = new OperationExecutor();
 
@@ -44,6 +46,19 @@ class Atm {
         oneHundredCollector.setNext(twentyEuroCollector);
         twentyEuroCollector.setNext(fiveEuroCollector);
         oneHundredCollector.process(amount, operationExecutor);
+
+        operationExecutor.executeOperations();
+    }
+
+    void giveAllMoney() {
+        System.out.println("\nGive all money...");
+        var operationExecutor = new OperationExecutor();
+
+        cells.values().forEach(cell -> {
+            for (int i = 0; i < cell.size(); i++) {
+                operationExecutor.addOperation(new GiveMoney(cell));
+            }
+        });
 
         operationExecutor.executeOperations();
     }
