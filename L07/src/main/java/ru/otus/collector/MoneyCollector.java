@@ -22,11 +22,12 @@ abstract public class MoneyCollector {
         int remainAmount = amount;
         Stack<Money> moneyCell = getMoneyCell();
         short cellNominal = getCellNominal();
-        int cellBalance = cellNominal * moneyCell.size();
+        int cellSize = moneyCell.size();
 
-        while (remainAmount <= cellBalance && remainAmount >= cellNominal) {
+        while (cellSize > 0 && remainAmount >= cellNominal) {
             operationExecutor.addOperation(new GiveMoney(moneyCell));
             remainAmount -= cellNominal;
+            cellSize--;
         }
 
         if (remainAmount == 0) {

@@ -32,7 +32,7 @@ class Atm {
         operationExecutor.executeOperations();
     }
 
-    void giveMoney(int amount) throws Exception {
+    void giveMoney(int amount) throws ImpossibleGiveMoneyException {
         System.out.println("Try to give amount: " + amount + "...");
 
         var operationExecutor = new OperationExecutor();

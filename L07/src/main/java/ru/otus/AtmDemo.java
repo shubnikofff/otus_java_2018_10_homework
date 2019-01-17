@@ -5,18 +5,25 @@ import ru.otus.money.*;
 import java.util.ArrayList;
 
 public class AtmDemo {
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) {
         Atm atm = createAtm();
         ArrayList<Money> money = prepareMoney();
 
         atm.putMoney(money);
         atm.printBalance();
 
-        atm.giveMoney(130);
-        atm.printBalance();
+        try {
+            atm.giveMoney(105);
+            atm.printBalance();
 
-        atm.giveMoney(133);
-        atm.printBalance();
+            atm.giveMoney(120);
+            atm.printBalance();
+
+            atm.giveMoney(15);
+        } catch (ImpossibleGiveMoneyException e) {
+            System.out.println(e.toString());
+            atm.printBalance();
+        }
     }
 
     private static Atm createAtm() {
