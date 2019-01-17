@@ -1,6 +1,11 @@
 package ru.otus.collector;
 
+import ru.otus.ImpossibleGiveMoneyException;
+import ru.otus.money.Money;
+import ru.otus.operation.GiveMoney;
 import ru.otus.operation.OperationExecutor;
+
+import java.util.Stack;
 
 abstract public class MoneyCollector {
     private MoneyCollector next;
@@ -13,8 +18,16 @@ abstract public class MoneyCollector {
         this.next = next;
     }
 
-    public void process(int amount, OperationExecutor operationExecutor) throws Exception {
-        int remainAmount = collectMoney(amount, operationExecutor);
+    public void process(int amount, OperationExecutor operationExecutor) throws ImpossibleGiveMoneyException {
+        int remainAmount = amount;
+        Stack<Money> moneyCell = getMoneyCell();
+        short cellNominal = getCellNominal();
+        int cellBalance = cellNominal * moneyCell.size();
+
+        while (remainAmount <= cellBalance && remainAmount >= cellNominal) {
+            operationExecutor.addOperation(new GiveMoney(moneyCell));
+            remainAmount -= cellNominal;
+        }
 
         if (remainAmount == 0) {
             System.out.println("Amount has been collected!");
@@ -24,9 +37,10 @@ abstract public class MoneyCollector {
         if (getNext() != null) {
             getNext().process(remainAmount, operationExecutor);
         } else {
-            throw new Exception("Required amount can't be collected");
+            throw new ImpossibleGiveMoneyException("Required amount can't be collected");
         }
     }
 
-    abstract int collectMoney(int amount, OperationExecutor operationExecutor);
+    abstract Stack<Money> getMoneyCell();
+    abstract short getCellNominal();
 }

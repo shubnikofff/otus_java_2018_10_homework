@@ -1,27 +1,24 @@
 package ru.otus.collector;
 
 import ru.otus.money.Money;
-import ru.otus.operation.GiveMoney;
-import ru.otus.operation.OperationExecutor;
 
 import java.util.HashMap;
 import java.util.Stack;
 
 public class TwentyEuroCollector extends MoneyCollector {
-    private HashMap<Short, Stack<Money>> atmCells;
+    private Stack<Money> atmCell;
 
     public TwentyEuroCollector(HashMap<Short, Stack<Money>> atmCells) {
-        this.atmCells = atmCells;
+        atmCell = atmCells.get(Money.TWENTY_EURO);
     }
 
     @Override
-    int collectMoney(int amount, OperationExecutor operationExecutor) {
-        int remainAmount = amount;
-        while (remainAmount >= Money.TWENTY_EURO) {
-            operationExecutor.addOperation(new GiveMoney(Money.TWENTY_EURO, atmCells));
-            remainAmount -= Money.TWENTY_EURO;
-        }
+    Stack<Money> getMoneyCell() {
+        return atmCell;
+    }
 
-        return remainAmount;
+    @Override
+    short getCellNominal() {
+        return Money.TWENTY_EURO;
     }
 }
