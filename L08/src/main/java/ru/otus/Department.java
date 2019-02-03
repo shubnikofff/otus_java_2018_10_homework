@@ -9,4 +9,8 @@ public class Department {
     public Department(int initialCapacity) {
         atmList = new ArrayList<>(initialCapacity);
     }
+
+    public void addAtm(Atm atm) {
+        atmList.add(atm);
+    }
 }
