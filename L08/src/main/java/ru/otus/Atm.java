@@ -34,6 +34,15 @@ public class Atm {
 		return balance;
 	}
 
+	boolean has(BanknoteNominal nominal, int amount) {
+		return state.get(nominal).getAmount() >= amount;
+	}
+
+	void give(BanknoteNominal nominal, int amount) {
+		AtmCell cell = state.get(nominal);
+		cell.setAmount(cell.getAmount() - amount);
+	}
+
 	static class Builder {
 		private Map<BanknoteNominal, AtmCell> initialState = new HashMap<>();
 
