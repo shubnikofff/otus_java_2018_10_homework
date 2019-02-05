@@ -3,14 +3,14 @@ package ru.otus;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Department {
+class Department {
     private List<Atm> atmList;
 
-    public Department(int initialCapacity) {
+    Department(int initialCapacity) {
         atmList = new ArrayList<>(initialCapacity);
     }
 
-    public void addAtm(Atm atm) {
+    void addAtm(Atm atm) {
         if(!atmList.isEmpty()) {
             atmList.get(atmList.size() - 1).setNext(atm);
         }

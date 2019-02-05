@@ -1,6 +1,6 @@
 package ru.otus;
 
-public enum BanknoteNominal {
+public enum Banknote {
     FiveEuro(5),
     TenEuro(10),
     TwentyEuro(20),
@@ -9,7 +9,7 @@ public enum BanknoteNominal {
 
     private int nominal;
 
-    BanknoteNominal(int nominal) {
+    Banknote(int nominal) {
         this.nominal = nominal;
     }
 

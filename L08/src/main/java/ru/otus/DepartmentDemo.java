@@ -1,5 +1,8 @@
 package ru.otus;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class DepartmentDemo {
     public static void main(String[] args) {
         Department department = new Department(3);
@@ -26,5 +29,17 @@ public class DepartmentDemo {
         department.addAtm(thirdAtm);
 
         System.out.println(department.getBalance());
+
+        firstAtm.acceptMoney(prepareMoney());
+
+        System.out.println(department.getBalance());
+    }
+
+    static private List<Banknote> prepareMoney() {
+        return new ArrayList<>(List.of(
+                Banknote.FiftyEuro,
+                Banknote.TwentyEuro,
+                Banknote.OneHundredEuro
+        ));
     }
 }

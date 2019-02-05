@@ -1,17 +1,23 @@
 package ru.otus;
 
-public class AtmCell {
+class AtmCell {
     private int amount;
 
-    public AtmCell(int initialAmount) {
+    AtmCell(int initialAmount) {
         amount = initialAmount;
     }
 
-    public int getAmount() {
+    int getAmount() {
         return amount;
     }
 
-    public void setAmount(int amount) {
-        this.amount = amount;
+    void giveBanknote() {
+        if(amount > 0) {
+            amount--;
+        }
+    }
+
+    void acceptBanknote() {
+        amount++;
     }
 }

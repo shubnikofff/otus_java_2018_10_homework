@@ -1,16 +1,46 @@
 package ru.otus;
 
+import ru.otus.operation.AcceptBanknoteOperation;
+import ru.otus.operation.OperationExecutor;
+
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class Atm {
-	private Map<BanknoteNominal, AtmCell> state;
+	private Map<Banknote, AtmCell> state;
 	private String name;
 	private Atm next;
 
-	private Atm(String name, Map<BanknoteNominal, AtmCell> initialState) {
+	private Atm(String name, Map<Banknote, AtmCell> initialState) {
 		this.name = name;
 		state = initialState;
+	}
+
+	void setNext(Atm next) {
+		this.next = next;
+	}
+
+	int getBalance() {
+		int balance = 0;
+
+		for (Map.Entry<Banknote, AtmCell> entry : state.entrySet()) {
+			balance += entry.getKey().getNominal() * entry.getValue().getAmount();
+		}
+
+		return balance;
+	}
+
+	public void acceptBanknote(Banknote banknote) {
+		if (state.containsKey(banknote)) {
+			state.get(banknote).acceptBanknote();
+		}
+	}
+
+	void acceptMoney(List<Banknote> money) {
+		OperationExecutor operationExecutor = new OperationExecutor();
+		money.forEach(banknote -> operationExecutor.addOperation(new AcceptBanknoteOperation(this, banknote)));
+		operationExecutor.executeOperations();
 	}
 
 	void putBalance(Balance balance) {
@@ -20,64 +50,45 @@ public class Atm {
 		}
 	}
 
-	public void setNext(Atm next) {
-		this.next = next;
-	}
-
-	int getBalance() {
-		int balance = 0;
-
-		for (Map.Entry<BanknoteNominal, AtmCell> entry : state.entrySet()) {
-			balance += entry.getKey().getNominal() * entry.getValue().getAmount();
-		}
-
-		return balance;
-	}
-
-	boolean has(BanknoteNominal nominal, int amount) {
+	boolean has(Banknote nominal, int amount) {
 		return state.get(nominal).getAmount() >= amount;
 	}
 
-	void give(BanknoteNominal nominal, int amount) {
-		AtmCell cell = state.get(nominal);
-		cell.setAmount(cell.getAmount() - amount);
-	}
-
 	static class Builder {
-		private Map<BanknoteNominal, AtmCell> initialState = new HashMap<>();
+		private Map<Banknote, AtmCell> initialState = new HashMap<>();
 
 		private String atmName;
 
-		public Builder(String atmName) {
+		Builder(String atmName) {
 			this.atmName = atmName;
 		}
 
-		public Builder withFiveEuro(int amount) {
-			initialState.put(BanknoteNominal.FiveEuro, new AtmCell(amount));
+		Builder withFiveEuro(int amount) {
+			initialState.put(Banknote.FiveEuro, new AtmCell(amount));
 			return this;
 		}
 
-		public Builder withTenEuro(int amount) {
-			initialState.put(BanknoteNominal.TenEuro, new AtmCell(amount));
+		Builder withTenEuro(int amount) {
+			initialState.put(Banknote.TenEuro, new AtmCell(amount));
 			return this;
 		}
 
-		public Builder withTwentyEuro(int amount) {
-			initialState.put(BanknoteNominal.TwentyEuro, new AtmCell(amount));
+		Builder withTwentyEuro(int amount) {
+			initialState.put(Banknote.TwentyEuro, new AtmCell(amount));
 			return this;
 		}
 
-		public Builder withFiftyEuro(int amount) {
-			initialState.put(BanknoteNominal.FiftyEuro, new AtmCell(amount));
+		Builder withFiftyEuro(int amount) {
+			initialState.put(Banknote.FiftyEuro, new AtmCell(amount));
 			return this;
 		}
 
-		public Builder withOneHundredEuro(int amount) {
-			initialState.put(BanknoteNominal.OneHundredEuro, new AtmCell(amount));
+		Builder withOneHundredEuro(int amount) {
+			initialState.put(Banknote.OneHundredEuro, new AtmCell(amount));
 			return this;
 		}
 
-		public Atm build() {
+		Atm build() {
 			return new Atm(atmName, initialState);
 		}
 	}
