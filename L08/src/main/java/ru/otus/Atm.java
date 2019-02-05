@@ -5,13 +5,43 @@ import java.util.Map;
 
 public class Atm {
 	private Map<BanknoteNominal, AtmCell> state;
+	private String name;
+	private Atm next;
 
-	private Atm(Map<BanknoteNominal, AtmCell> initialState) {
+	private Atm(String name, Map<BanknoteNominal, AtmCell> initialState) {
+		this.name = name;
 		state = initialState;
+	}
+
+	void putBalance(Balance balance) {
+		balance.put(name, getBalance());
+		if (next != null) {
+			next.putBalance(balance);
+		}
+	}
+
+	public void setNext(Atm next) {
+		this.next = next;
+	}
+
+	int getBalance() {
+		int balance = 0;
+
+		for (Map.Entry<BanknoteNominal, AtmCell> entry : state.entrySet()) {
+			balance += entry.getKey().getNominal() * entry.getValue().getAmount();
+		}
+
+		return balance;
 	}
 
 	static class Builder {
 		private Map<BanknoteNominal, AtmCell> initialState = new HashMap<>();
+
+		private String atmName;
+
+		public Builder(String atmName) {
+			this.atmName = atmName;
+		}
 
 		public Builder withFiveEuro(int amount) {
 			initialState.put(BanknoteNominal.FiveEuro, new AtmCell(amount));
@@ -39,17 +69,7 @@ public class Atm {
 		}
 
 		public Atm build() {
-			return new Atm(initialState);
+			return new Atm(atmName, initialState);
 		}
-	}
-
-	int getBalance() {
-		int balance = 0;
-
-		for (Map.Entry<BanknoteNominal, AtmCell> entry : state.entrySet()) {
-			balance += entry.getKey().getNominal() * entry.getValue().getAmount();
-		}
-
-		return balance;
 	}
 }

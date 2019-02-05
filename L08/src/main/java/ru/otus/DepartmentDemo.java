@@ -1,24 +1,21 @@
 package ru.otus;
 
-import java.util.Random;
-
 public class DepartmentDemo {
     public static void main(String[] args) {
         Department department = new Department(3);
-        Random random = new Random();
 
-        Atm firstAtm = new Atm.Builder()
+        Atm firstAtm = new Atm.Builder("Atm#1")
                 .withFiveEuro(4)
                 .withFiftyEuro(10)
                 .withOneHundredEuro(2)
                 .build();
-        Atm secondAtm = new Atm.Builder()
+        Atm secondAtm = new Atm.Builder("Atm#2")
                 .withFiveEuro(4)
                 .withTenEuro(15)
                 .withTwentyEuro(6)
                 .withFiftyEuro(10)
                 .build();
-        Atm thirdAtm = new Atm.Builder()
+        Atm thirdAtm = new Atm.Builder("Atm#3")
                 .withFiveEuro(5)
                 .withTenEuro(3)
                 .withOneHundredEuro(5)
@@ -28,6 +25,6 @@ public class DepartmentDemo {
         department.addAtm(secondAtm);
         department.addAtm(thirdAtm);
 
-        System.out.println(firstAtm.getBalance());
+        System.out.println(department.getBalance());
     }
 }
