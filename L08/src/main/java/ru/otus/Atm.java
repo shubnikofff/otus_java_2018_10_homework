@@ -1,5 +1,6 @@
 package ru.otus;
 
+import ru.otus.collector.*;
 import ru.otus.operation.AcceptBanknoteOperation;
 import ru.otus.operation.OperationExecutor;
 
@@ -37,9 +38,35 @@ public class Atm {
 		}
 	}
 
+	public void giveBanknote(Banknote banknote) {
+		AtmCell atmCell = state.get(banknote);
+		if (atmCell != null && atmCell.getAmount() > 0) {
+			atmCell.giveBanknote();
+		}
+	}
+
 	void acceptMoney(List<Banknote> money) {
+		System.out.println("Accepting money...");
 		OperationExecutor operationExecutor = new OperationExecutor();
 		money.forEach(banknote -> operationExecutor.addOperation(new AcceptBanknoteOperation(this, banknote)));
+		operationExecutor.executeOperations();
+	}
+
+	void giveMoney(int amount) throws ImpossibleCollectAmountException {
+		System.out.println("Try to give " + amount + "...");
+		FiveEuroCollector fiveEuroCollector = new FiveEuroCollector();
+		TenEuroCollector tenEuroCollector = new TenEuroCollector();
+		TwentyEuroCollector twentyEuroCollector = new TwentyEuroCollector();
+		FiftyEuroCollector fiftyEuroCollector = new FiftyEuroCollector();
+		OneHundredEuroCollector oneHundredEuroCollector = new OneHundredEuroCollector();
+
+		oneHundredEuroCollector.setNext(fiftyEuroCollector);
+		fiftyEuroCollector.setNext(twentyEuroCollector);
+		twentyEuroCollector.setNext(tenEuroCollector);
+		tenEuroCollector.setNext(fiveEuroCollector);
+
+		OperationExecutor operationExecutor = new OperationExecutor();
+		oneHundredEuroCollector.collect(amount, this, operationExecutor);
 		operationExecutor.executeOperations();
 	}
 
@@ -50,8 +77,15 @@ public class Atm {
 		}
 	}
 
-	boolean has(Banknote nominal, int amount) {
-		return state.get(nominal).getAmount() >= amount;
+	public int getBanknoteAmount(Banknote banknote) {
+		if (!state.containsKey(banknote)) {
+			return 0;
+		}
+		return state.get(banknote).getAmount();
+	}
+
+	void printBalance() {
+		System.out.println(name + ": " + getBalance());
 	}
 
 	static class Builder {

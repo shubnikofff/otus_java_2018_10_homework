@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DepartmentDemo {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws ImpossibleCollectAmountException {
         Department department = new Department(3);
 
         Atm firstAtm = new Atm.Builder("Atm#1")
@@ -31,8 +31,10 @@ public class DepartmentDemo {
         System.out.println(department.getBalance());
 
         firstAtm.acceptMoney(prepareMoney());
+        firstAtm.printBalance();
 
-        System.out.println(department.getBalance());
+        secondAtm.giveMoney(530);
+        secondAtm.printBalance();
     }
 
     static private List<Banknote> prepareMoney() {
