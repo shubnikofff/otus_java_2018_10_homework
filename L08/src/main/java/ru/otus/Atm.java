@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class Atm {
+public class Atm implements Listener {
 	private Map<Banknote, AtmCell> state;
 	private String name;
 	private Atm next;
@@ -86,6 +86,11 @@ public class Atm {
 
 	void printBalance() {
 		System.out.println(name + ": " + getBalance());
+	}
+
+	@Override
+	public void onReset() {
+		System.out.println("Reset " + name);
 	}
 
 	static class Builder {
