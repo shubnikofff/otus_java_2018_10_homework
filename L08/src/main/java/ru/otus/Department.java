@@ -20,6 +20,7 @@ class Department {
 	}
 
 	void resetAtm() {
+		System.out.println("\nReset all atm to initial state...");
 		resetter.apply();
 	}
 

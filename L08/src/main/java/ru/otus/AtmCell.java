@@ -18,4 +18,12 @@ class AtmCell {
 	void acceptBanknote() {
 		amount++;
 	}
+
+	Memento saveState() {
+		return new Memento(amount);
+	}
+
+	void restoreState(Memento memento) {
+		amount = memento.getState();
+	}
 }

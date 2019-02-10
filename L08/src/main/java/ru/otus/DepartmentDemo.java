@@ -37,6 +37,8 @@ public class DepartmentDemo {
         secondAtm.printBalance();
 
         department.resetAtm();
+
+        System.out.println(department.getBalance());
     }
 
     static private List<Banknote> prepareMoney() {

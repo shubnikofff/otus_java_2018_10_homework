@@ -9,13 +9,15 @@ import java.util.List;
 import java.util.Map;
 
 public class Atm implements Listener {
+	private Atm next;
+	private Caretaker caretaker;
 	private Map<Banknote, AtmCell> state;
 	private String name;
-	private Atm next;
 
-	private Atm(String name, Map<Banknote, AtmCell> initialState) {
+	private Atm(String name, Map<Banknote, AtmCell> initialState, Caretaker caretaker) {
 		this.name = name;
 		state = initialState;
+		this.caretaker = caretaker;
 	}
 
 	void setNext(Atm next) {
@@ -90,11 +92,12 @@ public class Atm implements Listener {
 
 	@Override
 	public void onReset() {
-		System.out.println("Reset " + name);
+		state.forEach((banknote, atmCell) -> atmCell.restoreState(caretaker.getMemento(atmCell)));
 	}
 
 	static class Builder {
 		private Map<Banknote, AtmCell> initialState = new HashMap<>();
+		private Caretaker caretaker = new Caretaker();
 
 		private String atmName;
 
@@ -103,32 +106,42 @@ public class Atm implements Listener {
 		}
 
 		Builder withFiveEuro(int amount) {
-			initialState.put(Banknote.FiveEuro, new AtmCell(amount));
+			AtmCell atmCell = new AtmCell(amount);
+			initialState.put(Banknote.FiveEuro, atmCell);
+			caretaker.putMemento(atmCell, atmCell.saveState());
 			return this;
 		}
 
 		Builder withTenEuro(int amount) {
-			initialState.put(Banknote.TenEuro, new AtmCell(amount));
+			AtmCell atmCell = new AtmCell(amount);
+			initialState.put(Banknote.TenEuro, atmCell);
+			caretaker.putMemento(atmCell, atmCell.saveState());
 			return this;
 		}
 
 		Builder withTwentyEuro(int amount) {
-			initialState.put(Banknote.TwentyEuro, new AtmCell(amount));
+			AtmCell atmCell = new AtmCell(amount);
+			initialState.put(Banknote.TwentyEuro, atmCell);
+			caretaker.putMemento(atmCell, atmCell.saveState());
 			return this;
 		}
 
 		Builder withFiftyEuro(int amount) {
-			initialState.put(Banknote.FiftyEuro, new AtmCell(amount));
+			AtmCell atmCell = new AtmCell(amount);
+			initialState.put(Banknote.FiftyEuro, atmCell);
+			caretaker.putMemento(atmCell, atmCell.saveState());
 			return this;
 		}
 
 		Builder withOneHundredEuro(int amount) {
-			initialState.put(Banknote.OneHundredEuro, new AtmCell(amount));
+			AtmCell atmCell = new AtmCell(amount);
+			initialState.put(Banknote.OneHundredEuro, atmCell);
+			caretaker.putMemento(atmCell, atmCell.saveState());
 			return this;
 		}
 
 		Atm build() {
-			return new Atm(atmName, initialState);
+			return new Atm(atmName, initialState, caretaker);
 		}
 	}
 }
