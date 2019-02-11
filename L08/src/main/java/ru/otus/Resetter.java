@@ -6,11 +6,11 @@ import java.util.List;
 class Resetter {
 	List<ResetHandler> resetHandlers = new ArrayList<>();
 
-	void addListener(ResetHandler resetHandler) {
+	void addHandler(ResetHandler resetHandler) {
 		resetHandlers.add(resetHandler);
 	}
 
-	void removeListener(ResetHandler resetHandler) {
+	void removeHandler(ResetHandler resetHandler) {
 		resetHandlers.remove(resetHandler);
 	}
 
