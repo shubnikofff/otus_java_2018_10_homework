@@ -1,6 +1,5 @@
 package ru.otus;
 
-import ru.otus.collector.*;
 import ru.otus.operation.AcceptBanknoteOperation;
 import ru.otus.operation.OperationExecutor;
 
@@ -48,27 +47,22 @@ public class Atm implements ResetHandler {
 	}
 
 	void acceptMoney(List<Banknote> money) {
-		System.out.println("Accepting money...");
+		System.out.println(name + ": accepting money...");
 		OperationExecutor operationExecutor = new OperationExecutor();
 		money.forEach(banknote -> operationExecutor.addOperation(new AcceptBanknoteOperation(this, banknote)));
 		operationExecutor.executeOperations();
 	}
 
 	void giveMoney(int amount) throws ImpossibleCollectAmountException {
-		System.out.println("Try to give " + amount + "...");
-		FiveEuroCollector fiveEuroCollector = new FiveEuroCollector();
-		TenEuroCollector tenEuroCollector = new TenEuroCollector();
-		TwentyEuroCollector twentyEuroCollector = new TwentyEuroCollector();
-		FiftyEuroCollector fiftyEuroCollector = new FiftyEuroCollector();
-		OneHundredEuroCollector oneHundredEuroCollector = new OneHundredEuroCollector();
+		System.out.println(name + ": try to give " + amount + "...");
 
-		oneHundredEuroCollector.setNext(fiftyEuroCollector);
-		fiftyEuroCollector.setNext(twentyEuroCollector);
-		twentyEuroCollector.setNext(tenEuroCollector);
-		tenEuroCollector.setNext(fiveEuroCollector);
+		Banknote.OneHundredEuro.setNext(Banknote.FiftyEuro);
+		Banknote.FiftyEuro.setNext(Banknote.TwentyEuro);
+		Banknote.TwentyEuro.setNext(Banknote.TenEuro);
+		Banknote.TenEuro.setNext(Banknote.FiveEuro);
 
 		OperationExecutor operationExecutor = new OperationExecutor();
-		oneHundredEuroCollector.collect(amount, this, operationExecutor);
+		Banknote.OneHundredEuro.collect(amount, this, operationExecutor);
 		operationExecutor.executeOperations();
 	}
 
@@ -79,7 +73,7 @@ public class Atm implements ResetHandler {
 		}
 	}
 
-	public int getBanknoteAmount(Banknote banknote) {
+	int getBanknoteAmount(Banknote banknote) {
 		if (!state.containsKey(banknote)) {
 			return 0;
 		}
