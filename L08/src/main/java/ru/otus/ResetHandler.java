@@ -1,5 +1,5 @@
 package ru.otus;
 
-public interface Listener {
+public interface ResetHandler {
 	void onReset();
 }

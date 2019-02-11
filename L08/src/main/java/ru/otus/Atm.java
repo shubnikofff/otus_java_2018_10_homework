@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class Atm implements Listener {
+public class Atm implements ResetHandler {
 	private Atm next;
 	private Caretaker caretaker;
 	private Map<Banknote, AtmCell> state;
