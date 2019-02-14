@@ -4,17 +4,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 class Resetter {
-	List<ResetHandler> resetHandlers = new ArrayList<>();
+	List<ResetListener> listeners = new ArrayList<>();
 
-	void addHandler(ResetHandler resetHandler) {
-		resetHandlers.add(resetHandler);
+	void addListener(ResetListener resetListener) {
+		listeners.add(resetListener);
 	}
 
-	void removeHandler(ResetHandler resetHandler) {
-		resetHandlers.remove(resetHandler);
+	void removeListener(ResetListener resetListener) {
+		listeners.remove(resetListener);
 	}
 
 	void apply() {
-		resetHandlers.forEach(ResetHandler::onReset);
+		listeners.forEach(ResetListener::onReset);
 	}
 }

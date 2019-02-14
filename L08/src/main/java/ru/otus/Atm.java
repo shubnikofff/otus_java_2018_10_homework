@@ -3,17 +3,15 @@ package ru.otus;
 import ru.otus.operation.AcceptBanknoteOperation;
 import ru.otus.operation.OperationExecutor;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
-public class Atm implements ResetHandler {
+public class Atm implements ResetListener {
 	private Atm next;
 	private Caretaker caretaker;
-	private Map<Banknote, AtmCell> state;
+	private TreeMap<Banknote, AtmCell> state;
 	private String name;
 
-	private Atm(String name, Map<Banknote, AtmCell> initialState, Caretaker caretaker) {
+	private Atm(String name, TreeMap<Banknote, AtmCell> initialState, Caretaker caretaker) {
 		this.name = name;
 		state = initialState;
 		this.caretaker = caretaker;
@@ -56,13 +54,17 @@ public class Atm implements ResetHandler {
 	void giveMoney(int amount) throws ImpossibleCollectAmountException {
 		System.out.println(name + ": try to give " + amount + "...");
 
-		Banknote.OneHundredEuro.setNext(Banknote.FiftyEuro);
-		Banknote.FiftyEuro.setNext(Banknote.TwentyEuro);
-		Banknote.TwentyEuro.setNext(Banknote.TenEuro);
-		Banknote.TenEuro.setNext(Banknote.FiveEuro);
+		Iterator<Map.Entry<Banknote, AtmCell>> iterator = state.entrySet().iterator();
+		Banknote banknote = state.firstKey();
+
+		while (iterator.hasNext()) {
+			Banknote next = iterator.next().getKey();
+			banknote.setNext(next);
+			banknote = next;
+		}
 
 		OperationExecutor operationExecutor = new OperationExecutor();
-		Banknote.OneHundredEuro.collect(amount, this, operationExecutor);
+		state.firstKey().collect(amount, this, operationExecutor);
 		operationExecutor.executeOperations();
 	}
 
@@ -90,7 +92,7 @@ public class Atm implements ResetHandler {
 	}
 
 	static class Builder {
-		private Map<Banknote, AtmCell> initialState = new HashMap<>();
+		private TreeMap<Banknote, AtmCell> initialState = new TreeMap<>((a, b) -> b.getNominal() - a.getNominal());
 		private Caretaker caretaker = new Caretaker();
 
 		private String atmName;

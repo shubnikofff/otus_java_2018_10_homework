@@ -16,7 +16,7 @@ class Department {
 			atmList.get(atmList.size() - 1).setNext(atm);
 		}
 		atmList.add(atm);
-		resetter.addHandler(atm);
+		resetter.addListener(atm);
 	}
 
 	void resetAtm() {
