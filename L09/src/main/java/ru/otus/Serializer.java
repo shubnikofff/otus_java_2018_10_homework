@@ -1,16 +1,31 @@
 package ru.otus;
 
+import javax.json.*;
+import java.lang.reflect.Array;
+
 class Serializer {
-	String toJson(Object src) {
+	JsonStructure toJson(Object src) {
 		Class<?> clazz = src.getClass();
 
 		if (clazz.isArray()) {
-			parseArray(src);
+			JsonArrayBuilder jsonArrayBuilder = Json.createArrayBuilder();
+			parseObject(jsonArrayBuilder, src);
+			return jsonArrayBuilder.build();
 		}
-		return src.toString();
+
+		JsonObjectBuilder jsonObjectBuilder = Json.createObjectBuilder();
+		parseObject(jsonObjectBuilder, src);
+		return jsonObjectBuilder.build();
 	}
 
-	private void parseArray(Object src) {
-		System.out.println("That's Array!");
+	private void parseObject(JsonObjectBuilder jsonObjectBuilder, Object object) {
+		Class<?> nodeClass = object.getClass();
+
+	}
+
+	private void parseObject(JsonArrayBuilder jsonArrayBuilder, Object object) {
+		for (int i = 0; i < Array.getLength(object); i++) {
+			jsonArrayBuilder.add(i, (JsonValue) Array.get(object, i));
+		}
 	}
 }
