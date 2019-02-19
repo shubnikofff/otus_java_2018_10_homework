@@ -2,10 +2,12 @@ package ru.otus;
 
 import com.github.javafaker.Faker;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import org.junit.Assert;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class SerializerDemo {
 	public static void main(String[] args) throws IllegalAccessException {
@@ -27,11 +29,12 @@ public class SerializerDemo {
 		}
 		Person[] arrayOfPersonFromJson = gson.fromJson(serializer.toJson(arrayOfPerson).toJSONString(), Person[].class);
 
-
-		ArrayList<Person> personArrayList = new ArrayList<>(Arrays.asList(arrayOfPerson));
-
+		List<Person> personArrayList = new ArrayList<>(Arrays.asList(arrayOfPerson));
+		TypeToken<List<Person>> token = new TypeToken<>() {};
+		List<Person> personArrayListFromJson = gson.fromJson(serializer.toJson(personArrayList).toJSONString(), token.getType());
 
 		Assert.assertArrayEquals(arrayOfInt, arrayOfIntFromJson);
 		Assert.assertArrayEquals(arrayOfPerson, arrayOfPersonFromJson);
+		Assert.assertEquals(personArrayList, personArrayListFromJson);
 	}
 }
