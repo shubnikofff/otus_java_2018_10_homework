@@ -2,22 +2,18 @@ package ru.otus;
 
 import com.github.javafaker.Faker;
 import com.google.gson.Gson;
+import org.junit.Assert;
 
-import javax.json.*;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 
 public class SerializerDemo {
 	public static void main(String[] args) throws IllegalAccessException {
 		Serializer serializer = new Serializer();
-//		Gson gson = new Gson();
-//
-		int[] arrayOfInt = {1, 2, 3};
-		boolean[] arrayOfBool = {true, false, true};
-//		System.out.println(gson.toJson(arrayOfInt));
-//
+		Gson gson = new Gson();
 
+		int[] arrayOfInt = {1, 2, 3};
+		int[] arrayOfIntFromJson = gson.fromJson(serializer.toJson(arrayOfInt).toJSONString(), int[].class);
 
 		Person[] arrayOfPerson = new Person[10];
 		Faker faker = new Faker();
@@ -29,14 +25,13 @@ public class SerializerDemo {
 					faker.bool().bool()
 			);
 		}
+		Person[] arrayOfPersonFromJson = gson.fromJson(serializer.toJson(arrayOfPerson).toJSONString(), Person[].class);
+
 
 		ArrayList<Person> personArrayList = new ArrayList<>(Arrays.asList(arrayOfPerson));
 
-		System.out.println(serializer.toJson(arrayOfInt));
-		System.out.println(serializer.toJson(arrayOfBool));
-		System.out.println(serializer.toJson(arrayOfPerson));
-		System.out.println(serializer.toJson(personArrayList));
 
-//		System.out.println(Json.createObjectBuilder(stringObjectHashMap).build());
+		Assert.assertArrayEquals(arrayOfInt, arrayOfIntFromJson);
+		Assert.assertArrayEquals(arrayOfPerson, arrayOfPersonFromJson);
 	}
 }
