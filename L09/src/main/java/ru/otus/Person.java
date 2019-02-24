@@ -1,10 +1,14 @@
 package ru.otus;
 
+import java.util.List;
+
 public class Person {
 	private String name;
 	private int age;
 	private String address;
 	private boolean isMarried;
+	private List list = List.of(1, 2, 3);
+	private Integer[] array = new Integer[]{1, 2, 3};
 
 	Person(String name, int age, String address, boolean isMarried) {
 		this.name = name;

@@ -15,7 +15,7 @@ public class SerializerDemo {
 		Gson gson = new Gson();
 
 		int[] arrayOfInt = {1, 2, 3};
-		int[] arrayOfIntFromJson = gson.fromJson(serializer.toJson(arrayOfInt).toJSONString(), int[].class);
+		int[] arrayOfIntFromJson = gson.fromJson(serializer.toJson(arrayOfInt), int[].class);
 
 		Person[] arrayOfPerson = new Person[10];
 		Faker faker = new Faker();
@@ -27,14 +27,18 @@ public class SerializerDemo {
 					faker.bool().bool()
 			);
 		}
-		Person[] arrayOfPersonFromJson = gson.fromJson(serializer.toJson(arrayOfPerson).toJSONString(), Person[].class);
+		Person[] arrayOfPersonFromJson = gson.fromJson(serializer.toJson(arrayOfPerson), Person[].class);
 
 		List<Person> personArrayList = new ArrayList<>(Arrays.asList(arrayOfPerson));
 		TypeToken<List<Person>> token = new TypeToken<>() {};
-		List<Person> personArrayListFromJson = gson.fromJson(serializer.toJson(personArrayList).toJSONString(), token.getType());
+		List<Person> personArrayListFromJson = gson.fromJson(serializer.toJson(personArrayList), token.getType());
 
 		Assert.assertArrayEquals(arrayOfInt, arrayOfIntFromJson);
 		Assert.assertArrayEquals(arrayOfPerson, arrayOfPersonFromJson);
 		Assert.assertEquals(personArrayList, personArrayListFromJson);
+
+		System.out.println(serializer.toJson(null));
+		System.out.println(serializer.toJson(List.of(1, 2, 3, 4)));
+		System.out.println(serializer.toJson(arrayOfPerson[0]));
 	}
 }
