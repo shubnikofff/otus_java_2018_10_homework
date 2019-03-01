@@ -4,8 +4,8 @@ import java.sql.SQLException;
 
 public class JdbcDemo {
 	public static void main(String[] args) throws SQLException {
-		Executor executor = new Executor();
-		executor.createTableUser();
-		executor.closeConnection();
+		DbManager dbManager = new DbManager();
+		dbManager.createTableUser();
+		dbManager.closeConnection();
 	}
 }

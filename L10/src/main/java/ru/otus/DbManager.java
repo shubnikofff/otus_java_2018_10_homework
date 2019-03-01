@@ -5,11 +5,11 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-class Executor {
+class DbManager {
 	private static final String URL = "jdbc:h2:mem:";
 	private final Connection connection;
 
-	Executor() throws SQLException {
+	DbManager() throws SQLException {
 		connection = DriverManager.getConnection(URL);
 		connection.setAutoCommit(false);
 	}
