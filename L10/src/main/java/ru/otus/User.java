@@ -1,8 +1,8 @@
 package ru.otus;
 
-public class User {
+class User {
 	@Id
-	private int id;
+	private long id;
 	private String name;
 	private int age;
 }
