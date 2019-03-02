@@ -13,17 +13,27 @@ public class JdbcDemo {
 		connection.setAutoCommit(false);
 
 		createTableUser(connection);
+		insertUser(connection);
 
-//		DbExecutor dbExecutor = new DbExecutor(connection);
 		Executor<User> executor = new Executor<>(connection);
-		executor.load(1, User.class);
+		User loadedUser = executor.load(1, User.class);
 
 		connection.close();
 	}
 
+	static private void insertUser(Connection connection) throws SQLException {
+		try (PreparedStatement pst = connection.prepareStatement("insert into User(name, age) values (?, ?)")) {
+			pst.setString(1, "Ivan");
+			pst.setInt(2, 34);
+			pst.executeUpdate();
+			connection.commit();
+		}
+	}
+
 	static private void createTableUser(Connection connection) throws SQLException {
-		try(PreparedStatement preparedStatement = connection.prepareStatement("create table User(id bigint(20), name varchar(255), age int(3))")) {
+		try (PreparedStatement preparedStatement = connection.prepareStatement("create table User(id bigint(20) NOT NULL auto_increment, name varchar(255), age int(3))")) {
 			preparedStatement.executeUpdate();
+			connection.commit();
 		}
 	}
 }

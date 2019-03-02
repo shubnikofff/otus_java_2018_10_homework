@@ -13,7 +13,7 @@ import java.util.stream.Stream;
 public class Executor<T> {
 	private final Connection connection;
 	private Map<Class, BiFunction<String, ResultSet, Object>> valueGetterMap = Map.of(
-			Integer.class, (columnName, resultSet) -> {
+			Integer.TYPE, (columnName, resultSet) -> {
 				try {
 					return resultSet.getInt(columnName);
 				} catch (SQLException e) {
@@ -27,7 +27,7 @@ public class Executor<T> {
 					throw new RuntimeException(e);
 				}
 			},
-			Long.class, (columnName, resultSet) -> {
+			Long.TYPE, (columnName, resultSet) -> {
 				try {
 					return resultSet.getLong(columnName);
 				} catch (SQLException e) {
@@ -36,7 +36,7 @@ public class Executor<T> {
 			}
 	);
 
-	public Executor(Connection connection) {
+	Executor(Connection connection) {
 		this.connection = connection;
 	}
 
@@ -60,12 +60,11 @@ public class Executor<T> {
 					Stream.of(declaredFields).forEach(field -> {
 						field.setAccessible(true);
 						try {
-							field.set(instance, valueGetterMap.get(field.getType()));
+							field.set(instance, valueGetterMap.get(field.getType()).apply(field.getName(), resultSet));
 						} catch (IllegalAccessException e) {
 							throw new RuntimeException(e);
 						}
 						field.setAccessible(false);
-
 					});
 					return instance;
 				}
