@@ -6,13 +6,14 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Map;
+import java.util.StringJoiner;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
 class Executor<T> {
 	private final Connection connection;
-	private Map<Class, BiFunction<String, ResultSet, Object>> valueGetterMap = Map.of(
+	private Map<Class, BiFunction<String, ResultSet, Object>> getterMap = Map.of(
 			Integer.TYPE, (columnName, resultSet) -> {
 				try {
 					return resultSet.getInt(columnName);
@@ -61,6 +62,7 @@ class Executor<T> {
 							} else {
 								update(object);
 							}
+							connection.commit();
 						}
 					} catch (Exception e) {
 						e.printStackTrace();
@@ -71,18 +73,67 @@ class Executor<T> {
 	}
 
 	private void insert(T object) {
+		Class<?> clazz = object.getClass();
+		Field[] declaredFields = clazz.getDeclaredFields();
+		StringJoiner columns = new StringJoiner(",");
+		StringJoiner marks = new StringJoiner(",");
 
+		Stream.of(declaredFields)
+				.forEach(field -> {
+					if (!field.isAnnotationPresent(Id.class)) {
+						columns.add(field.getName());
+						marks.add("?");
+					}
+				});
+		String sql = "insert into "
+				+ clazz.getSimpleName()
+				+ "("+ columns.toString()
+				+") values ("
+				+ marks.toString() + ")";
+
+		System.out.println(sql);
+
+		try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+			Stream.of(declaredFields).forEach(field -> bindParameter(preparedStatement, object));
+			preparedStatement.executeUpdate();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 
 	private void update(T object) {
 
 	}
 
+	private void bindParameter(PreparedStatement preparedStatement, Object object) {
+		int columnIndex = 1;
+		try {
+			for (Field field : object.getClass().getDeclaredFields()) {
+				if (field.isAnnotationPresent(Id.class)) {
+					continue;
+				}
+				field.setAccessible(true);
+				if (field.getType() == Integer.TYPE) {
+					preparedStatement.setInt(columnIndex, field.getInt(object));
+				}
+				if (field.getType() == Long.TYPE) {
+					preparedStatement.setLong(columnIndex, field.getLong(object));
+				}
+				if (field.getType() == String.class) {
+					preparedStatement.setString(columnIndex, (String) field.get(object));
+				}
+				columnIndex++;
+			}
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
 	<T> T load(long id, Class<T> clazz) {
 		String tableName = clazz.getSimpleName();
 		Field[] declaredFields = clazz.getDeclaredFields();
 
-		Function<Field, T> findAnMakeObject = idAnnotatedField -> {
+		Function<Field, T> findAndMakeObject = idAnnotatedField -> {
 			String sql = "select * from " + tableName + " where " + idAnnotatedField.getName() + " = ?";
 
 			try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
@@ -93,7 +144,7 @@ class Executor<T> {
 					Stream.of(declaredFields).forEach(field -> {
 						field.setAccessible(true);
 						try {
-							field.set(instance, valueGetterMap.get(field.getType()).apply(field.getName(), resultSet));
+							field.set(instance, getterMap.get(field.getType()).apply(field.getName(), resultSet));
 						} catch (IllegalAccessException e) {
 							throw new RuntimeException(e);
 						}
@@ -111,7 +162,7 @@ class Executor<T> {
 		return Stream.of(declaredFields)
 				.filter(field -> field.isAnnotationPresent(Id.class))
 				.findFirst()
-				.map(findAnMakeObject)
+				.map(findAndMakeObject)
 				.orElse(null);
 	}
 }

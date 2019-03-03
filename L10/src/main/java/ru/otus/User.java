@@ -6,6 +6,8 @@ class User {
 	private String name;
 	private int age;
 
+	public User() {}
+
 	User(long id, String name, int age) {
 		this.id = id;
 		this.name = name;
@@ -23,4 +25,6 @@ class User {
 	public void setAge(int age) {
 		this.age = age;
 	}
+
+
 }

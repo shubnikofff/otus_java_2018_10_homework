@@ -20,7 +20,13 @@ public class JdbcDemo {
 		User newUser = new User(1, "Bill", 34);
 		executor.save(newUser);
 
-//		User loadedUser = executor.load(1, User.class);
+		User loadedUser = executor.load(1, User.class);
+//		loadedUser.setAge(35);
+
+//		executor.save(loadedUser);
+//		executor.load(1, User.class);
+
+
 
 		connection.close();
 	}
