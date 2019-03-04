@@ -138,6 +138,7 @@ class Executor<T> {
 					columnIndex++;
 				}
 			}
+			System.out.println(sql);
 			preparedStatement.executeUpdate();
 		} catch (SQLException e) {
 			throw new RuntimeException(e);

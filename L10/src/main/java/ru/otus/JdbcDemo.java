@@ -20,21 +20,12 @@ public class JdbcDemo {
 		executor.save(newUser);
 
 		User loadedUser = executor.load(1, User.class);
+		loadedUser.setName("Harry");
 		loadedUser.setAge(35);
 
 		executor.save(loadedUser);
-		User updatedUser = executor.load(1, User.class);
 
 		connection.close();
-	}
-
-	static private void insertUser(Connection connection) throws SQLException {
-		try (PreparedStatement pst = connection.prepareStatement("insert into User(name, age) values (?, ?)")) {
-			pst.setString(1, "Ivan");
-			pst.setInt(2, 34);
-			pst.executeUpdate();
-			connection.commit();
-		}
 	}
 
 	static private void createTableUser(Connection connection) throws SQLException {
