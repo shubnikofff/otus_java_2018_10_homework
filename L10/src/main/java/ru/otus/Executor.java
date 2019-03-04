@@ -87,14 +87,20 @@ class Executor<T> {
 				});
 		String sql = "insert into "
 				+ clazz.getSimpleName()
-				+ "("+ columns.toString()
-				+") values ("
+				+ "(" + columns.toString()
+				+ ") values ("
 				+ marks.toString() + ")";
 
 		System.out.println(sql);
 
 		try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
-			Stream.of(declaredFields).forEach(field -> bindParameter(preparedStatement, object));
+			int columnIndex = 1;
+			for (Field field : declaredFields) {
+				if (!field.isAnnotationPresent(Id.class)) {
+					bindParameter(preparedStatement, field, columnIndex, object);
+					columnIndex++;
+				}
+			}
 			preparedStatement.executeUpdate();
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -102,28 +108,55 @@ class Executor<T> {
 	}
 
 	private void update(T object) {
+		Class<?> clazz = object.getClass();
+		Field[] declaredFields = clazz.getDeclaredFields();
 
+		StringJoiner setExpression = new StringJoiner(",");
+		String whereExpression = " where ";
+
+		for (Field field : declaredFields) {
+			try {
+				field.setAccessible(true);
+				if (field.isAnnotationPresent(Id.class)) {
+					whereExpression += field.getName() + "=?";
+				} else {
+					setExpression.add(field.getName() + "=?");
+				}
+			} catch (Exception e) {
+				throw new RuntimeException(e);
+			}
+		}
+
+		String sql = "update " + clazz.getSimpleName() + " set " + setExpression + whereExpression;
+		try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+			int columnIndex = 1;
+			for (Field field : declaredFields) {
+				if (field.isAnnotationPresent(Id.class)) {
+					bindParameter(preparedStatement, field, declaredFields.length, object);
+				} else {
+					bindParameter(preparedStatement, field, columnIndex, object);
+					columnIndex++;
+				}
+			}
+			preparedStatement.executeUpdate();
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
-	private void bindParameter(PreparedStatement preparedStatement, Object object) {
-		int columnIndex = 1;
+	private void bindParameter(PreparedStatement preparedStatement, Field field, int columnIndex, Object object) {
 		try {
-			for (Field field : object.getClass().getDeclaredFields()) {
-				if (field.isAnnotationPresent(Id.class)) {
-					continue;
-				}
-				field.setAccessible(true);
-				if (field.getType() == Integer.TYPE) {
-					preparedStatement.setInt(columnIndex, field.getInt(object));
-				}
-				if (field.getType() == Long.TYPE) {
-					preparedStatement.setLong(columnIndex, field.getLong(object));
-				}
-				if (field.getType() == String.class) {
-					preparedStatement.setString(columnIndex, (String) field.get(object));
-				}
-				columnIndex++;
+			field.setAccessible(true);
+			if (field.getType() == Integer.TYPE) {
+				preparedStatement.setInt(columnIndex, field.getInt(object));
 			}
+			if (field.getType() == Long.TYPE) {
+				preparedStatement.setLong(columnIndex, field.getLong(object));
+			}
+			if (field.getType() == String.class) {
+				preparedStatement.setString(columnIndex, (String) field.get(object));
+			}
+			field.setAccessible(false);
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
@@ -134,11 +167,12 @@ class Executor<T> {
 		Field[] declaredFields = clazz.getDeclaredFields();
 
 		Function<Field, T> findAndMakeObject = idAnnotatedField -> {
-			String sql = "select * from " + tableName + " where " + idAnnotatedField.getName() + " = ?";
+			String sql = "select * from " + tableName + " where " + idAnnotatedField.getName() + "=?";
 
 			try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
 				preparedStatement.setLong(1, id);
 				ResultSet resultSet = preparedStatement.executeQuery();
+				System.out.println(sql);
 				if (resultSet.next()) {
 					T instance = clazz.getDeclaredConstructor().newInstance();
 					Stream.of(declaredFields).forEach(field -> {

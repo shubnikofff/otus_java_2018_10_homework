@@ -13,7 +13,6 @@ public class JdbcDemo {
 		connection.setAutoCommit(false);
 
 		createTableUser(connection);
-//		insertUser(connection);
 
 		Executor<User> executor = new Executor<>(connection);
 
@@ -21,12 +20,10 @@ public class JdbcDemo {
 		executor.save(newUser);
 
 		User loadedUser = executor.load(1, User.class);
-//		loadedUser.setAge(35);
+		loadedUser.setAge(35);
 
-//		executor.save(loadedUser);
-//		executor.load(1, User.class);
-
-
+		executor.save(loadedUser);
+		User updatedUser = executor.load(1, User.class);
 
 		connection.close();
 	}
