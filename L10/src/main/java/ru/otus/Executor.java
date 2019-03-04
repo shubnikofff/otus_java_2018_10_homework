@@ -51,10 +51,10 @@ class Executor<T> {
 				.findFirst()
 				.map((idField) -> {
 					try {
-						idField.setAccessible(true);
-						String sql = "select count(*) from " + tableName + " where " + idField.getName() + " = ?";
+						String sql = "select count(*) from " + tableName + " where " + idField.getName() + "=?";
 						try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
-							preparedStatement.setLong(1, idField.getLong(object));
+							bindParameter(preparedStatement, idField, 1, object);
+							System.out.println(sql);
 							ResultSet resultSet = preparedStatement.executeQuery();
 							resultSet.next();
 							if (resultSet.getInt(1) == 0) {
