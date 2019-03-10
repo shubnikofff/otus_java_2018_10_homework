@@ -6,7 +6,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Map;
-import java.util.StringJoiner;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Stream;
@@ -66,23 +65,7 @@ class Executor<T> {
 	private void insert(T object) {
 		Class<?> clazz = object.getClass();
 		Field[] declaredFields = clazz.getDeclaredFields();
-		StringJoiner columns = new StringJoiner(",");
-		StringJoiner marks = new StringJoiner(",");
-
-		Stream.of(declaredFields)
-				.forEach(field -> {
-					if (!field.isAnnotationPresent(Id.class)) {
-						columns.add(field.getName());
-						marks.add("?");
-					}
-				});
-		String sql = "insert into "
-				+ clazz.getSimpleName()
-				+ "(" + columns.toString()
-				+ ") values ("
-				+ marks.toString() + ")";
-
-		System.out.println(sql);
+		String sql = SqlBuilder.buildInsert(clazz);
 
 		try (PreparedStatement preparedStatement = connection.prepareStatement(sql, 1)) {
 			int columnIndex = 1;
@@ -92,6 +75,8 @@ class Executor<T> {
 					columnIndex++;
 				}
 			}
+
+			System.out.println(sql);
 			preparedStatement.executeUpdate();
 
 			Stream.of(declaredFields)
@@ -120,24 +105,8 @@ class Executor<T> {
 	private void update(T object) {
 		Class<?> clazz = object.getClass();
 		Field[] declaredFields = clazz.getDeclaredFields();
+		String sql = SqlBuilder.buildUpdate(clazz);
 
-		StringJoiner setExpression = new StringJoiner(",");
-		String whereExpression = " where ";
-
-		for (Field field : declaredFields) {
-			try {
-				field.setAccessible(true);
-				if (field.isAnnotationPresent(Id.class)) {
-					whereExpression += field.getName() + "=?";
-				} else {
-					setExpression.add(field.getName() + "=?");
-				}
-			} catch (Exception e) {
-				throw new RuntimeException(e);
-			}
-		}
-
-		String sql = "update " + clazz.getSimpleName() + " set " + setExpression + whereExpression;
 		try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
 			int columnIndex = 1;
 			for (Field field : declaredFields) {
