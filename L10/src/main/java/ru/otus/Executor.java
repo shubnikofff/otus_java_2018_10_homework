@@ -41,34 +41,25 @@ class Executor<T> {
 		this.connection = connection;
 	}
 
-	void save(T object) {
-		Class<?> clazz = object.getClass();
-		String tableName = clazz.getSimpleName();
-		Field[] declaredFields = clazz.getDeclaredFields();
-
-		Stream.of(declaredFields)
+	boolean save(T object) {
+		return Stream.of(object.getClass().getDeclaredFields())
 				.filter(field -> field.isAnnotationPresent(Id.class))
 				.findFirst()
 				.map((idField) -> {
 					try {
-						String sql = "select count(*) from " + tableName + " where " + idField.getName() + "=?";
-						try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
-							bindParameter(preparedStatement, idField, 1, object);
-							System.out.println(sql);
-							ResultSet resultSet = preparedStatement.executeQuery();
-							resultSet.next();
-							if (resultSet.getInt(1) == 0) {
-								insert(object);
-							} else {
-								update(object);
-							}
-							connection.commit();
+						idField.setAccessible(true);
+						if (idField.getLong(object) == 0) {
+							insert(object);
+						} else {
+							update(object);
 						}
-					} catch (Exception e) {
+						idField.setAccessible(false);
+					} catch (IllegalAccessException e) {
 						e.printStackTrace();
 					}
-					return false;
-				});
+					return true;
+				})
+				.orElse(false);
 
 	}
 
@@ -93,7 +84,7 @@ class Executor<T> {
 
 		System.out.println(sql);
 
-		try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+		try (PreparedStatement preparedStatement = connection.prepareStatement(sql, 1)) {
 			int columnIndex = 1;
 			for (Field field : declaredFields) {
 				if (!field.isAnnotationPresent(Id.class)) {
@@ -102,6 +93,25 @@ class Executor<T> {
 				}
 			}
 			preparedStatement.executeUpdate();
+
+			Stream.of(declaredFields)
+					.filter(field -> field.isAnnotationPresent(Id.class))
+					.findFirst()
+					.map(field -> {
+						long generatedId = 0;
+						try {
+							ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
+							if (generatedKeys.next()) {
+								field.setAccessible(true);
+								generatedId = generatedKeys.getLong(1);
+								field.setLong(object, generatedId);
+								field.setAccessible(false);
+							}
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+						return generatedId;
+					});
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -145,18 +155,19 @@ class Executor<T> {
 		}
 	}
 
-	private void bindParameter(PreparedStatement preparedStatement, Field field, int columnIndex, Object object) {
+	private void bindParameter(PreparedStatement preparedStatement, Field field, int parameterIndex, Object object) {
 		try {
 			field.setAccessible(true);
 			if (field.getType() == Integer.TYPE) {
-				preparedStatement.setInt(columnIndex, field.getInt(object));
+				preparedStatement.setInt(parameterIndex, field.getInt(object));
 			}
 			if (field.getType() == Long.TYPE) {
-				preparedStatement.setLong(columnIndex, field.getLong(object));
+				preparedStatement.setLong(parameterIndex, field.getLong(object));
 			}
 			if (field.getType() == String.class) {
-				preparedStatement.setString(columnIndex, (String) field.get(object));
+				preparedStatement.setString(parameterIndex, (String) field.get(object));
 			}
+//			preparedStatement.setObject(parameterIndex, object);
 			field.setAccessible(false);
 		} catch (Exception e) {
 			throw new RuntimeException(e);

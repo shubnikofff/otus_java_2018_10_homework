@@ -16,10 +16,10 @@ public class JdbcDemo {
 
 			Executor<User> executor = new Executor<>(connection);
 
-			User newUser = new User(1, "Bill", 34);
+			User newUser = new User("Bill", 34);
 			executor.save(newUser);
 
-			User loadedUser = executor.load(1, User.class);
+			User loadedUser = executor.load(newUser.getId(), User.class);
 			loadedUser.setName("Harry");
 			loadedUser.setAge(35);
 

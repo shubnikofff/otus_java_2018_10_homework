@@ -8,21 +8,20 @@ class User {
 
 	public User() {}
 
-	User(long id, String name, int age) {
-		this.id = id;
+	User(String name, int age) {
 		this.name = name;
 		this.age = age;
 	}
 
-	public void setId(long id) {
-		this.id = id;
+	long getId() {
+		return id;
 	}
 
-	public void setName(String name) {
+	void setName(String name) {
 		this.name = name;
 	}
 
-	public void setAge(int age) {
+	void setAge(int age) {
 		this.age = age;
 	}
 }
