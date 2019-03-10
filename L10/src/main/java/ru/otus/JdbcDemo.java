@@ -9,23 +9,22 @@ public class JdbcDemo {
 	private static final String DB_URL = "jdbc:h2:mem:";
 
 	public static void main(String[] args) throws SQLException {
-		Connection connection = DriverManager.getConnection(DB_URL);
-		connection.setAutoCommit(false);
+		try (Connection connection = DriverManager.getConnection(DB_URL)) {
+			connection.setAutoCommit(false);
 
-		createTableUser(connection);
+			createTableUser(connection);
 
-		Executor<User> executor = new Executor<>(connection);
+			Executor<User> executor = new Executor<>(connection);
 
-		User newUser = new User(1, "Bill", 34);
-		executor.save(newUser);
+			User newUser = new User(1, "Bill", 34);
+			executor.save(newUser);
 
-		User loadedUser = executor.load(1, User.class);
-		loadedUser.setName("Harry");
-		loadedUser.setAge(35);
+			User loadedUser = executor.load(1, User.class);
+			loadedUser.setName("Harry");
+			loadedUser.setAge(35);
 
-		executor.save(loadedUser);
-
-		connection.close();
+			executor.save(loadedUser);
+		}
 	}
 
 	static private void createTableUser(Connection connection) throws SQLException {
