@@ -7,7 +7,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Map;
 import java.util.function.BiFunction;
-import java.util.function.Function;
 import java.util.stream.Stream;
 
 class Executor<T> {
@@ -65,7 +64,7 @@ class Executor<T> {
 	private void insert(T object) {
 		Class<?> clazz = object.getClass();
 		Field[] declaredFields = clazz.getDeclaredFields();
-		String sql = SqlBuilder.buildInsert(clazz);
+		String sql = new SqlBuilder(clazz).buildInsert();
 
 		try (PreparedStatement preparedStatement = connection.prepareStatement(sql, 1)) {
 			int columnIndex = 1;
@@ -105,7 +104,7 @@ class Executor<T> {
 	private void update(T object) {
 		Class<?> clazz = object.getClass();
 		Field[] declaredFields = clazz.getDeclaredFields();
-		String sql = SqlBuilder.buildUpdate(clazz);
+		String sql = new SqlBuilder(clazz).buildUpdate();
 
 		try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
 			int columnIndex = 1;
@@ -136,7 +135,7 @@ class Executor<T> {
 			if (field.getType() == String.class) {
 				preparedStatement.setString(parameterIndex, (String) field.get(object));
 			}
-//			preparedStatement.setObject(parameterIndex, object);
+//			preparedStatement.setObject(parameterIndex, object); // java.io.NotSerializableException: ru.otus.User
 			field.setAccessible(false);
 		} catch (Exception e) {
 			throw new RuntimeException(e);
@@ -144,40 +143,30 @@ class Executor<T> {
 	}
 
 	<T> T load(long id, Class<T> clazz) {
-		String tableName = clazz.getSimpleName();
 		Field[] declaredFields = clazz.getDeclaredFields();
+		String sql = new SqlBuilder(clazz).buildSelect();
 
-		Function<Field, T> findAndMakeObject = idAnnotatedField -> {
-			String sql = "select * from " + tableName + " where " + idAnnotatedField.getName() + "=?";
-
-			try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
-				preparedStatement.setLong(1, id);
-				ResultSet resultSet = preparedStatement.executeQuery();
-				System.out.println(sql);
-				if (resultSet.next()) {
-					T instance = clazz.getDeclaredConstructor().newInstance();
-					Stream.of(declaredFields).forEach(field -> {
-						field.setAccessible(true);
-						try {
-							field.set(instance, getterMap.get(field.getType()).apply(field.getName(), resultSet));
-						} catch (IllegalAccessException e) {
-							throw new RuntimeException(e);
-						}
-						field.setAccessible(false);
-					});
-					return instance;
-				}
-			} catch (Exception e) {
-				throw new RuntimeException(e);
+		try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+			preparedStatement.setLong(1, id);
+			System.out.println(sql);
+			ResultSet resultSet = preparedStatement.executeQuery();
+			if (resultSet.next()) {
+				T instance = clazz.getDeclaredConstructor().newInstance();
+				Stream.of(declaredFields).forEach(field -> {
+					field.setAccessible(true);
+					try {
+						field.set(instance, getterMap.get(field.getType()).apply(field.getName(), resultSet));
+					} catch (IllegalAccessException e) {
+						throw new RuntimeException(e);
+					}
+					field.setAccessible(false);
+				});
+				return instance;
 			}
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
 
-			return null;
-		};
-
-		return Stream.of(declaredFields)
-				.filter(field -> field.isAnnotationPresent(Id.class))
-				.findFirst()
-				.map(findAndMakeObject)
-				.orElse(null);
+		return null;
 	}
 }
