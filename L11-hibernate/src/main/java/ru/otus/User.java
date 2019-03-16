@@ -1,6 +1,7 @@
 package ru.otus;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -20,6 +21,7 @@ class User {
 
 	@Id
 	@GeneratedValue
+	@Column(name = "id")
 	private long id;
 
 	@Column(name = "name")
@@ -28,15 +30,31 @@ class User {
 	@Column(name = "age")
 	private int age;
 
-	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@OneToOne(
+			cascade = CascadeType.ALL,
+			fetch = FetchType.LAZY,
+			orphanRemoval = true
+	)
 	@JoinColumn(name = "address_id", nullable = false)
 	private Address address;
 
-	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@JoinColumn(name = "user_id", nullable = false)
-	private List<Phone> phones;
+	@OneToMany(
+			cascade = CascadeType.ALL,
+			fetch = FetchType.LAZY,
+			mappedBy = "user",
+			orphanRemoval = true
+	)
+	private List<Phone> phones = new ArrayList<>();
 
 	long getId() {
 		return id;
+	}
+
+	List<Phone> getPhones() {
+		return phones;
+	}
+
+	void setAddress(Address address) {
+		this.address = address;
 	}
 }

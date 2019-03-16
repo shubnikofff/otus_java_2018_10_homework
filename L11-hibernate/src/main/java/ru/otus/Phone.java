@@ -6,8 +6,16 @@ import javax.persistence.*;
 @Table(name = "phone")
 class Phone {
 
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "user_id")
+	private User user;
+
 	Phone(String number) {
 		this.number = number;
+	}
+
+	Phone() {
+		super();
 	}
 
 	@Id
