@@ -32,6 +32,7 @@ public class HibernateDemo {
 			User loadedVladimir = executor.load(vladimir.getId(), User.class);
 			System.out.println("\nAfter load: " + gson.toJson(loadedVladimir) + "\n");
 			loadedVladimir.getPhones().add(new Phone("333-333-333"));
+			loadedVladimir.getPhones().remove(0);
 			loadedVladimir.setAddress(new Address("St. Petersburg"));
 			executor.save(loadedVladimir);
 			System.out.println("\nAfter update: " + gson.toJson(loadedVladimir) + "\n");
