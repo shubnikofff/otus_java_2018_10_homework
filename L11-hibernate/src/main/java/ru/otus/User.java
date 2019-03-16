@@ -5,7 +5,19 @@ import java.util.List;
 
 @Entity
 @Table(name = "user")
-public class User {
+class User {
+
+	User(String name, int age, Address address, List<Phone> phones) {
+		this.name = name;
+		this.age = age;
+		this.address = address;
+		this.phones = phones;
+	}
+
+	User() {
+		super();
+	}
+
 	@Id
 	@GeneratedValue
 	private long id;
@@ -21,6 +33,10 @@ public class User {
 	private Address address;
 
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@JoinColumn(name = "phones", nullable = false)
+	@JoinColumn(name = "user_id", nullable = false)
 	private List<Phone> phones;
+
+	long getId() {
+		return id;
+	}
 }

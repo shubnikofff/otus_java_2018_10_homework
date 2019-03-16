@@ -1,10 +1,22 @@
 package ru.otus;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
+import javax.persistence.*;
 
-@Entity(name = "address")
+@Entity
+@Table(name = "address")
 class Address {
+
+	Address() {
+		super();
+	}
+
+	Address(String street) {
+		this.street = street;
+	}
+
+	@Id
+	@GeneratedValue
+	private long id;
 
 	@Column(name = "street")
 	private String street;
