@@ -1,4 +1,4 @@
-package ru.otus;
+package ru.otus.executor;
 
 public interface Executor<T> {
 	<T> T load(long id, Class<T> clazz);
