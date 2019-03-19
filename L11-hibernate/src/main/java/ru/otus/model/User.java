@@ -1,8 +1,5 @@
 package ru.otus.model;
 
-import ru.otus.model.Address;
-import ru.otus.model.Phone;
-
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;

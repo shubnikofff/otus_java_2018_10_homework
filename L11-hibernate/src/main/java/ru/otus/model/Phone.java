@@ -1,7 +1,5 @@
 package ru.otus.model;
 
-import ru.otus.model.User;
-
 import javax.persistence.*;
 
 @Entity
