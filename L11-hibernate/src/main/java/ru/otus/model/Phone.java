@@ -1,16 +1,18 @@
-package ru.otus;
+package ru.otus.model;
+
+import ru.otus.model.User;
 
 import javax.persistence.*;
 
 @Entity
 @Table(name = "phone")
-class Phone {
+public class Phone {
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "user_id")
 	private User user;
 
-	Phone(String number) {
+	public Phone(String number) {
 		this.number = number;
 	}
 

@@ -1,4 +1,7 @@
-package ru.otus;
+package ru.otus.model;
+
+import ru.otus.model.Address;
+import ru.otus.model.Phone;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -6,9 +9,9 @@ import java.util.List;
 
 @Entity
 @Table(name = "user")
-class User {
+public class User {
 
-	User(String name, int age, Address address, List<Phone> phones) {
+	public User(String name, int age, Address address, List<Phone> phones) {
 		this.name = name;
 		this.age = age;
 		this.address = address;
@@ -46,15 +49,15 @@ class User {
 	)
 	private List<Phone> phones = new ArrayList<>();
 
-	long getId() {
+	public long getId() {
 		return id;
 	}
 
-	List<Phone> getPhones() {
+	public List<Phone> getPhones() {
 		return phones;
 	}
 
-	void setAddress(Address address) {
+	public void setAddress(Address address) {
 		this.address = address;
 	}
 }

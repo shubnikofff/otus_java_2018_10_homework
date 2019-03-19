@@ -1,16 +1,16 @@
-package ru.otus;
+package ru.otus.model;
 
 import javax.persistence.*;
 
 @Entity
 @Table(name = "address")
-class Address {
+public class Address {
 
 	Address() {
 		super();
 	}
 
-	Address(String street) {
+	public Address(String street) {
 		this.street = street;
 	}
 
