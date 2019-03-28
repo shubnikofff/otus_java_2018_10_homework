@@ -1,0 +1,30 @@
+html,
+body,
+.container {
+    height: 100%;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    padding: 0 30%;
+}
+
+form > div {
+    padding: 1rem 0;
+}
+
+.field {
+    display: flex;
+    justify-content: space-between;
+}
+
+.submit:hover {
+}
