@@ -1,29 +1,29 @@
 package ru.otus;
 
 import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.server.handler.HandlerList;
-import org.eclipse.jetty.server.handler.ResourceHandler;
+import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlet.ServletContextHandler;
-import org.eclipse.jetty.util.resource.Resource;
+import org.eclipse.jetty.servlet.ServletHolder;
+import ru.otus.filter.AuthFilter;
+import ru.otus.server.ServerBuilder;
+import ru.otus.servlet.LoginServlet;
+import ru.otus.servlet.UserListServlet;
 
 public class WebServerDemo {
-	private final static int PORT = 8080;
-	private final static String PUBLIC_HTML = "/static";
-
 	public static void main(String[] args) throws Exception {
-		new WebServerDemo().start();
+		new WebServerDemo().startWebServer();
 	}
 
-	private void start() throws Exception {
-		System.out.println("Web Server...");
-		ResourceHandler resourceHandler = new ResourceHandler();
-		Resource resource = Resource.newClassPathResource(PUBLIC_HTML);
-		resourceHandler.setBaseResource(resource);
-
+	private void startWebServer() throws Exception {
 		ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
+		context.addServlet(new ServletHolder(new LoginServlet()), "/login");
+		context.addServlet(new ServletHolder(new UserListServlet()), "/user-list");
+		context.addFilter(new FilterHolder(new AuthFilter()), "/user-list", null);
 
-		Server server = new Server(PORT);
-		server.setHandler(new HandlerList(resourceHandler, context));
+		Server server = new ServerBuilder(context)
+				.withPort(8080)
+				.withPathResource("static")
+				.build();
 
 		server.start();
 		server.join();
