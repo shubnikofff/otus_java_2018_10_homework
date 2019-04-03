@@ -1,10 +1,11 @@
 package ru.otus.model;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 @Entity
 @Table(name = "address")
-public class Address {
+public class Address implements Serializable {
 
 	Address() {
 		super();
@@ -20,4 +21,9 @@ public class Address {
 
 	@Column(name = "street")
 	private String street;
+
+	@Override
+	public String toString() {
+		return street;
+	}
 }

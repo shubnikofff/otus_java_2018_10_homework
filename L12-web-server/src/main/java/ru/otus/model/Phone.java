@@ -1,10 +1,11 @@
 package ru.otus.model;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 @Entity
 @Table(name = "phone")
-public class Phone {
+public class Phone implements Serializable {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "user_id")
@@ -27,5 +28,10 @@ public class Phone {
 
 	public String getNumber() {
 		return number;
+	}
+
+	@Override
+	public String toString() {
+		return  number;
 	}
 }

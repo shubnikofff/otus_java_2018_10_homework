@@ -1,21 +1,15 @@
 package ru.otus.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.*;
 
 @Entity
 @Table(name = "user")
-public class User {
+public class User implements Serializable {
 
-	public User(String name, int age, Address address, List<Phone> phones) {
-		this.name = name;
-		this.age = age;
-		this.address = address;
-		this.phones = phones;
-	}
-
-	User() {
+	public User() {
 		super();
 	}
 
@@ -41,7 +35,6 @@ public class User {
 	@OneToMany(
 			cascade = CascadeType.ALL,
 			fetch = FetchType.LAZY,
-			mappedBy = "user",
 			orphanRemoval = true
 	)
 	private List<Phone> phones = new ArrayList<>();
@@ -50,11 +43,35 @@ public class User {
 		return id;
 	}
 
+	public int getAge() {
+		return age;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public Address getAddress() {
+		return address;
+	}
+
 	public List<Phone> getPhones() {
 		return phones;
 	}
 
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public void setAge(int age) {
+		this.age = age;
+	}
+
 	public void setAddress(Address address) {
 		this.address = address;
+	}
+
+	public void addPhone(Phone phone) {
+		phones.add(phone);
 	}
 }
