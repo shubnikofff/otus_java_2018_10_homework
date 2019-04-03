@@ -14,17 +14,13 @@ form {
     display: flex;
     flex-direction: column;
     justify-content: space-evenly;
-    padding: 0 30%;
+    padding: 0 40%;
 }
 
 form > div {
     padding: 1rem 0;
 }
 
-.field {
-    display: flex;
-    justify-content: space-between;
-}
-
-.submit:hover {
+input {
+    padding: 5px;
 }

@@ -35,7 +35,7 @@ public class ListUserServlet extends HttpServlet {
 			writer.println("<title>User list</title>");
 			writer.println("</head>");
 			writer.println("<body>");
-			writer.println("<div class=\"link-container\"><a href=\"/create-user\">Create user</a></div>");
+			writer.println("<div class=\"link-container\"><a href=\"/admin\">< Back to admin page</a></div>");
 			writer.println("<table>");
 			writer.println("<tr>");
 			writer.println("<th>Id</th><th>Name</th><th>Age</th><th>Address</th><th>Phones</th>");

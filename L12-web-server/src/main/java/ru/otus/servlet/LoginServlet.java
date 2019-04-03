@@ -12,9 +12,9 @@ public class LoginServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		if (AuthService.auth(request.getParameter("login"), request.getParameter("password"))) {
 			request.getSession();
-			response.sendRedirect("/user-list");
+			response.sendRedirect("/admin");
 		} else {
-			response.sendRedirect("/index.html");
+			response.sendRedirect("/login.html");
 		}
 	}
 }

@@ -16,7 +16,7 @@ public class AuthFilter implements javax.servlet.Filter {
 		HttpServletResponse httpServletResponse = (HttpServletResponse) servletResponse;
 
 		if (httpServletRequest.getSession(false) == null) {
-			httpServletResponse.sendRedirect("/index.html");
+			httpServletResponse.sendRedirect("/login.html");
 		}
 
 		filterChain.doFilter(httpServletRequest, httpServletResponse);
