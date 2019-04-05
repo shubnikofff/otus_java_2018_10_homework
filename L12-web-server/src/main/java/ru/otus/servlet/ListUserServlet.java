@@ -4,55 +4,41 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import ru.otus.dao.HibernateDao;
 import ru.otus.model.User;
+import ru.otus.service.TemplateProcessor;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.PrintWriter;
+import java.util.HashMap;
 import java.util.List;
 
 public class ListUserServlet extends HttpServlet {
+	private static final String VARIABLE_USER_LIST = "userList";
+	private static final String TEMPLATE_FILE_NAME = "list.ftl";
+
 	private SessionFactory sessionFactory;
+	private TemplateProcessor templateProcessor;
 
 	public ListUserServlet(SessionFactory sessionFactory) {
 		this.sessionFactory = sessionFactory;
+		templateProcessor = new TemplateProcessor();
 	}
 
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		response.setContentType("text/html");
-		PrintWriter writer = response.getWriter();
 
 		try (Session session = sessionFactory.openSession()) {
 			final HibernateDao<User> userHibernateDao = new HibernateDao<>(session);
 			final List<User> userList = userHibernateDao.getAll(User.class);
 
-			writer.println("<html>");
-			writer.println("<head>");
-			writer.println("<head>");
-			writer.println("<link rel=\"stylesheet\" type=\"text/css\" href=\"/css/list.css\">");
-			writer.println("<title>User list</title>");
-			writer.println("</head>");
-			writer.println("<body>");
-			writer.println("<div class=\"link-container\"><a href=\"/admin\">< Back to admin page</a></div>");
-			writer.println("<table>");
-			writer.println("<tr>");
-			writer.println("<th>Id</th><th>Name</th><th>Age</th><th>Address</th><th>Phones</th>");
-			writer.println("</tr>");
+			final HashMap<String, Object> variables = new HashMap<>();
+			variables.put(VARIABLE_USER_LIST, userList);
 
-			userList.forEach(user -> {
-				writer.println("<tr><td>" + user.getId() + "</td>");
-				writer.println("<td>" + user.getName() + "</td>");
-				writer.println("<td>" + user.getAge() + "</td>");
-				writer.println("<td>" + user.getAddress() + "</td>");
-				writer.println("<td>" + user.getPhones() + "</td>");
-				writer.println("</tr>");
-			});
-
-			writer.println("</table>");
-			writer.println("</body>");
-			writer.println("</html>");
+			response.setContentType("text/html;charset=utf-8");
+			response.getWriter().println(templateProcessor.getPage(TEMPLATE_FILE_NAME, variables));
+			response.setStatus(HttpServletResponse.SC_OK);
 		}
 	}
 }
