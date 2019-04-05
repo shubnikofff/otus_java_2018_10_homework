@@ -1,37 +1,45 @@
 package ru.otus.server;
 
 import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.server.handler.ContextHandler;
 import org.eclipse.jetty.server.handler.HandlerList;
 import org.eclipse.jetty.server.handler.ResourceHandler;
+import org.eclipse.jetty.servlet.FilterHolder;
+import org.eclipse.jetty.servlet.ServletContextHandler;
+import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.util.resource.Resource;
+import org.hibernate.SessionFactory;
+import ru.otus.filter.AuthFilter;
+import ru.otus.servlet.AdminServlet;
+import ru.otus.servlet.CreateUserServlet;
+import ru.otus.servlet.ListUserServlet;
+import ru.otus.servlet.LoginServlet;
 
 public class ServerBuilder {
-	private ContextHandler contextHandler;
-	private int port = 80;
-	private String pathResource = "/public";
+	private final ResourceHandler resourceHandler = new ResourceHandler();
+	private final ServletContextHandler contextHandler = new ServletContextHandler(ServletContextHandler.SESSIONS);
 
-	public ServerBuilder(ContextHandler contextHandler) {
-		this.contextHandler = contextHandler;
-	}
-
-	public ServerBuilder withPort(int port) {
-		this.port = port;
+	public ServerBuilder withResourceHandler(String resourcePath) {
+		resourceHandler.setBaseResource(Resource.newClassPathResource(resourcePath));
 		return this;
 	}
 
-	public ServerBuilder withPathResource(String pathResource) {
-		this.pathResource = pathResource;
+	public ServerBuilder withContextHandler(SessionFactory sessionFactory) {
+		contextHandler.addServlet(new ServletHolder(new AdminServlet()), "/admin");
+		contextHandler.addServlet(new ServletHolder(new LoginServlet()), "/login");
+		contextHandler.addServlet(new ServletHolder(new ListUserServlet(sessionFactory)), "/list");
+		contextHandler.addServlet(new ServletHolder(new CreateUserServlet(sessionFactory)), "/create");
+
+		contextHandler.addFilter(new FilterHolder(new AuthFilter()), "/admin", null);
+		contextHandler.addFilter(new FilterHolder(new AuthFilter()), "/create", null);
+		contextHandler.addFilter(new FilterHolder(new AuthFilter()), "/list", null);
+
 		return this;
 	}
 
-	public Server build() {
-		ResourceHandler resourceHandler = new ResourceHandler();
-		Resource resource = Resource.newClassPathResource(pathResource);
-		resourceHandler.setBaseResource(resource);
-
-		Server server = new Server(port);
+	public Server build(int port) {
+		final Server server = new Server(port);
 		server.setHandler(new HandlerList(resourceHandler, contextHandler));
+
 		return server;
 	}
 }

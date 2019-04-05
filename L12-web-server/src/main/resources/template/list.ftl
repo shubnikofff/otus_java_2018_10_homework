@@ -4,6 +4,9 @@
         <link rel="stylesheet" type="text/css" href="/css/list.css">
     </head>
     <body>
+        <div>
+            <a href="admin">Admin page</a>
+        </div>
         <h3>User list</h3>
         <table>
             <tr>
