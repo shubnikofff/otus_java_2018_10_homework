@@ -1,31 +1,22 @@
 package ru.otus.servlet;
 
+import ru.otus.service.TemplateProcessor;
+
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.PrintWriter;
+import java.util.HashMap;
 
 public class AdminServlet extends HttpServlet {
-	@Override
-	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-		resp.setContentType("text/html");
-		PrintWriter writer = resp.getWriter();
+	private static final String TEMPLATE_FILE_NAME = "admin.ftl";
 
-		writer.println("<html>");
-		writer.println("<head>");
-		writer.println("<head>");
-		writer.println("<link rel=\"stylesheet\" type=\"text/css\" href=\"/css/admin.css\">");
-		writer.println("<title>Admin page</title>");
-		writer.println("</head>");
-		writer.println("<body>");
-		writer.println("<div>");
-		writer.println("<a href=\"create.html\">Create user</a>");
-		writer.println("</div>");
-		writer.println("<div>");
-		writer.println("<a href=\"list\">User list</a>");
-		writer.println("</div>");
-		writer.println("</body>");
-		writer.println("</html>");
+	private TemplateProcessor templateProcessor = new TemplateProcessor();
+
+	@Override
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+		response.setContentType("text/html;charset=utf-8");
+		response.getWriter().println(templateProcessor.getPage(TEMPLATE_FILE_NAME, new HashMap<>(0)));
+		response.setStatus(HttpServletResponse.SC_OK);
 	}
 }
