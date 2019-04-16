@@ -2,29 +2,29 @@ package ru.otus;
 
 import java.util.concurrent.ThreadLocalRandom;
 
-public class QuickSort implements Runnable {
+class QuickSort implements Runnable {
 	private int[] source;
-	private int leftBorder;
-	private int rightBorder;
+	private int initialLeftBorder;
+	private int initialRightBorder;
 
-	public QuickSort(int[] source, int leftBorder, int rightBorder) {
+	QuickSort(int[] source, int leftBorder, int rightBorder) {
 		this.source = source;
-		this.leftBorder = leftBorder;
-		this.rightBorder = rightBorder;
+		initialLeftBorder = leftBorder;
+		initialRightBorder = rightBorder;
 	}
 
 	@Override
 	public void run() {
-
+		sort(initialLeftBorder, initialRightBorder);
 	}
 
-	private void doSort(int leftBorder, int rightBorder) {
+	int sort(int leftBorder, int rightBorder) {
 		int i = leftBorder;
 		int j = rightBorder;
-		int pivot = source[ThreadLocalRandom.current().nextInt(leftBorder, rightBorder)];
+		int pivotIndex = ThreadLocalRandom.current().nextInt(leftBorder, rightBorder);
+		int pivot = source[pivotIndex];
 		System.out.println("Pivot: " + pivot);
 
-//		split(source, i, j);
 		do {
 			while (source[i] < pivot) {
 				i++;
@@ -47,11 +47,13 @@ public class QuickSort implements Runnable {
 		} while (i <= j);
 
 		if (i < rightBorder) {
-			quickSort(source, i, rightBorder);
+			sort(i, rightBorder);
 		}
 
 		if (leftBorder < j) {
-			quickSort(source, leftBorder, j);
+			sort(leftBorder, j);
 		}
+
+		return pivotIndex;
 	}
 }

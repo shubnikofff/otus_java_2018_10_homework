@@ -1,5 +1,5 @@
 package ru.otus;
 
-public interface Sorting<T> {
-	void sort(T[] source);
+public interface Sorting {
+	void sort(int[] source);
 }

@@ -2,7 +2,6 @@ package ru.otus;
 
 import java.util.Arrays;
 import java.util.Random;
-import java.util.concurrent.ThreadLocalRandom;
 
 public class ThreadDemo {
 	private static final int THREAD_COUNT = 4;
@@ -35,9 +34,12 @@ public class ThreadDemo {
 //		quickSort(ints, 0, i3 - 1);
 //		quickSort(ints, 0, ints.length - 1);
 
-		quickSort(ints, 0, ints.length - 1);
+//		quickSort(ints, 0, ints.length - 1);
+		final QuickSort quickSort = new QuickSort(ints, 0, ints.length - 1);
+		quickSort.run();
 
 		System.out.println(Arrays.toString(ints));
+		System.out.println(1/2);
 	}
 
 //	private static int split(int source[], int i, int j) {
@@ -70,42 +72,7 @@ public class ThreadDemo {
 //		return i;
 //	}
 
-	private static void quickSort(int source[], int leftBorder, int rightBorder) {
-//		int i = leftBorder;
-//		int j = rightBorder;
-//		int pivot = source[ThreadLocalRandom.current().nextInt(leftBorder, rightBorder)];
-//		System.out.println("Pivot: " + pivot);
-//
-////		split(source, i, j);
-//		do {
-//			while (source[i] < pivot) {
-//				i++;
-//			}
-//			while (source[j] > pivot) {
-//				j--;
-//			}
-//
-//			if (i <= j) {
-//				if(i < j) {
-//					System.out.println("Swap " + source[i] + " and " + source[j]);
-//					int temp = source[i];
-//					source[i] = source[j];
-//					source[j] = temp;
-//				}
-//
-//				i++;
-//				j--;
-//			}
-//		} while (i <= j);
-//
-//		if (i < rightBorder) {
-//			quickSort(source, i, rightBorder);
-//		}
-//
-//		if (leftBorder < j) {
-//			quickSort(source, leftBorder, j);
-//		}
-	}
+
 
 	private static int[] generateArray(int size, int bound) {
 		int[] ints = new int[size];
