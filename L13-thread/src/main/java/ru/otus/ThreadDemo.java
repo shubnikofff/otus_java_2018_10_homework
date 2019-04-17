@@ -5,7 +5,7 @@ import java.util.Random;
 
 public class ThreadDemo {
 	private static final int THREAD_COUNT = 4;
-	private static final int ARRAY_LENGTH = 100;
+	private static final int ARRAY_LENGTH = 20;
 	private static final Random random = new Random();
 
 	public static void main(String[] args) {
@@ -29,50 +29,23 @@ public class ThreadDemo {
 //		System.out.println(i3 + " : " + (ints.length - 1));
 //
 //
+
 //		quickSort(ints, 0, i1 - 1);
 //		quickSort(ints, 0, i2 - 1);
 //		quickSort(ints, 0, i3 - 1);
 //		quickSort(ints, 0, ints.length - 1);
 
 //		quickSort(ints, 0, ints.length - 1);
-		final QuickSort quickSort = new QuickSort(ints, 0, ints.length - 1);
-		quickSort.run();
 
-		System.out.println(Arrays.toString(ints));
-		System.out.println(1/2);
+//		final QuickSort quickSort = new QuickSort(ints, 0, ints.length - 1);
+//		quickSort.run();
+
+		MultiThreadQuickSort multiThreadQuickSort = new MultiThreadQuickSort(THREAD_COUNT);
+//		multiThreadQuickSort.sort(ints);
+		multiThreadQuickSort.split(ints);
+
+//		System.out.println(Arrays.toString(ints));
 	}
-
-//	private static int split(int source[], int i, int j) {
-//		int pivot = source[ThreadLocalRandom.current().nextInt(i, j)];
-//		System.out.println("Pivot: " + pivot);
-//
-//		do {
-//			while (source[i] < pivot) {
-//				i++;
-//			}
-//			while (source[j] > pivot) {
-//				j--;
-//			}
-//
-//			if (i <= j) {
-//				if(i < j) {
-//					System.out.println("Swap " + source[i] + " and " + source[j]);
-//					int temp = source[i];
-//					source[i] = source[j];
-//					source[j] = temp;
-//				}
-//
-//				i++;
-//				j--;
-//
-//				System.out.println("Internal: " + Arrays.toString(source));
-//			}
-//		} while (i <= j);
-//
-//		return i;
-//	}
-
-
 
 	private static int[] generateArray(int size, int bound) {
 		int[] ints = new int[size];
