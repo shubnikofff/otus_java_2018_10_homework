@@ -5,12 +5,13 @@ import java.util.Random;
 
 public class ThreadDemo {
 	private static final int THREAD_COUNT = 4;
-	private static final int ARRAY_LENGTH = 20;
+//	private static final int ARRAY_LENGTH = 20;
+	private static final int ARRAY_LENGTH = 1_000_00000;
 	private static final Random random = new Random();
 
 	public static void main(String[] args) {
-		int[] ints = generateArray(ARRAY_LENGTH, 100);
-		System.out.println(Arrays.toString(ints));
+		int[] ints = generateArray(ARRAY_LENGTH, 1_000_00);
+//		System.out.println(Arrays.toString(ints));
 
 //		int i2 = split(ints, 0, ints.length - 1);
 //		int i1 = split(ints, 0, i2 - 1);
@@ -40,9 +41,18 @@ public class ThreadDemo {
 //		final QuickSort quickSort = new QuickSort(ints, 0, ints.length - 1);
 //		quickSort.run();
 
+
+
+
+
 		MultiThreadQuickSort multiThreadQuickSort = new MultiThreadQuickSort(THREAD_COUNT);
+
+
 //		multiThreadQuickSort.sort(ints);
-		multiThreadQuickSort.split(ints);
+		multiThreadQuickSort.multiSort(ints);
+
+
+
 
 //		System.out.println(Arrays.toString(ints));
 	}

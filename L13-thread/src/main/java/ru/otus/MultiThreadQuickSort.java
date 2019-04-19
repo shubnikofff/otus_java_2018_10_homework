@@ -4,6 +4,7 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Stream;
 
@@ -50,31 +51,70 @@ public class MultiThreadQuickSort implements Sorting {
 		System.out.println(System.currentTimeMillis() - start);
 	}
 
-	void split(int[] source) {
-		int[] pivotIndexes = ThreadLocalRandom
-				.current()
-				.ints(threadQuantity - 1, 0, source.length - 1)
-				.sorted()
-				.toArray();
 
-		int[] pivots = Arrays
-				.stream(pivotIndexes)
+	void multiSort(int[] source) {
+		var start = System.currentTimeMillis();
+
+		List<Thread> threadPool = getThreadPool(source);
+
+		threadPool.forEach(Thread::start);
+
+		threadPool.forEach(thread -> {
+			try {
+				thread.join();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		});
+
+		System.out.println(System.currentTimeMillis() - start);
+	}
+
+	private List<Thread> getThreadPool(int[] source) {
+
+
+//		int[] pivotIndexes = ThreadLocalRandom
+//				.current()
+//				.ints(threadQuantity - 1, 0, source.length - 1)
+//				.sorted()
+//				.toArray();
+
+//		int[] pivots = Arrays
+//				.stream(pivotIndexes)
+//				.map(index -> source[index])
+//				.sorted()
+//				.toArray();
+		int[] pivots = ThreadLocalRandom.current()
+				.ints(threadQuantity - 1, 0, source.length - 1)
 				.map(index -> source[index])
 				.sorted()
 				.toArray();
 
-		for (int i = 0; i < pivotIndexes.length; i++) {
-			for (int j = 0; j < source.length; j++) {
-				if(source[j] > source[pivotIndexes[i]]) {
-					int temp = source[j];
-					source[j] = source[pivotIndexes[i]];
-					source[pivotIndexes[i]] = temp;
-					pivotIndexes[i] = j;
-				}
-			}
+//		int[][] result = new int[pivots.length][2];
+//		System.out.println(Arrays.toString(pivots));
+		List<Thread> threadPool = new ArrayList<>(threadQuantity);
+
+		int leftBorder = 0;
+//		int[] result = new int[2];
+		for (int pivot : pivots) {
+//			System.out.println(Arrays.toString(QuickSort.splitAndSwap(source, 0, source.length - 1, pivot)));
+			int[] result = QuickSort.splitAndSwap(source, 0, source.length - 1, pivot);
+			threadPool.add(new Thread(new QuickSort(source, leftBorder, result[0]), String.valueOf(leftBorder)));
+
+//			Thread thread = new Thread(new QuickSort(source, leftBorder, result[0]), "Thread with pivot>>>" + pivot);
+//			thread.start();
+//			try {
+//				thread.join();
+//			} catch (InterruptedException e) {
+//				e.printStackTrace();
+//			}
+			leftBorder = result[0];
 		}
 
-		System.out.println(Arrays.toString(pivotIndexes));
+		threadPool.add(new Thread(new QuickSort(source, leftBorder, source.length - 1), String.valueOf(leftBorder)));
+
+
+		return threadPool;
 	}
 
 	// TODO: Refactor this piece of shit with inplace swaps
