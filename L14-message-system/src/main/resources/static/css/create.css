@@ -1,0 +1,16 @@
+body {
+    padding: 1rem;
+}
+
+.field {
+    padding-bottom: 1rem;
+}
+
+.label {
+    font-weight: bold;
+    margin: 5px 0;
+}
+
+input {
+    padding: 5px;
+}
