@@ -5,6 +5,7 @@ import org.hibernate.Session;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
+import java.io.Serializable;
 import java.util.List;
 
 public class HibernateDao<T> implements Dao<T> {
@@ -28,13 +29,17 @@ public class HibernateDao<T> implements Dao<T> {
 	}
 
 	@Override
-	public void save(T object) {
+	public Serializable save(T object) {
+		Serializable id = null;
+
 		try {
 			session.beginTransaction();
-			session.save(object);
+			id = session.save(object);
 			session.getTransaction().commit();
 		} catch (Exception e) {
 			session.getTransaction().rollback();
 		}
+
+		return id;
 	}
 }
