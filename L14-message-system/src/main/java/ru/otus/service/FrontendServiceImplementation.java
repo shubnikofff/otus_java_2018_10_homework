@@ -1,6 +1,7 @@
 package ru.otus.service;
 
 import ru.otus.app.MessageSystemContext;
+import ru.otus.app.messages.AuthenticateRequestMessage;
 import ru.otus.app.messages.SaveUserRequestMessage;
 import ru.otus.messageSystem.Address;
 import ru.otus.messageSystem.MessageSystem;
@@ -12,6 +13,7 @@ import java.util.List;
 public class FrontendServiceImplementation implements FrontendService {
 	private Address address;
 	private MessageSystemContext messageSystemContext;
+	private volatile Boolean auth;
 
 	public FrontendServiceImplementation(Address address, MessageSystemContext messageSystemContext) {
 		this.address = address;
@@ -19,13 +21,25 @@ public class FrontendServiceImplementation implements FrontendService {
 	}
 
 	@Override
-	public void createUser(HttpServletRequest request) {
-		final SaveUserRequestMessage message = new SaveUserRequestMessage(
-				this.address,
-				messageSystemContext.getDbAddress(),
-				getUserFromRequest(request)
-		);
+	public boolean auth(String login, String password) {
+		final AuthenticateRequestMessage message = new AuthenticateRequestMessage(address, messageSystemContext.getAuthAddress(), login, password);
+		messageSystemContext.getMessageSystem().sendMessage(message);
 
+		while (auth == null) {
+			Thread.onSpinWait();
+		}
+
+		return auth;
+	}
+
+	@Override
+	public void setAuthResult(boolean authResult) {
+		auth = authResult;
+	}
+
+	@Override
+	public void createUser(HttpServletRequest request) {
+		final SaveUserRequestMessage message = new SaveUserRequestMessage(address, messageSystemContext.getDbAddress(), getUserFromRequest(request));
 		messageSystemContext.getMessageSystem().sendMessage(message);
 	}
 

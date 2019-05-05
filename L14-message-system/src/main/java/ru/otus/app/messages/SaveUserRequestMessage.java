@@ -2,7 +2,6 @@ package ru.otus.app.messages;
 
 import ru.otus.app.MessageToDB;
 import ru.otus.messageSystem.Address;
-import ru.otus.messageSystem.Addressee;
 import ru.otus.model.User;
 import ru.otus.service.DBService;
 
@@ -16,6 +15,6 @@ public class SaveUserRequestMessage extends MessageToDB {
 
 	@Override
 	public void exec(DBService dbService) {
-		long id = dbService.saveUser(user);
+		dbService.saveUser(user);
 	}
 }
