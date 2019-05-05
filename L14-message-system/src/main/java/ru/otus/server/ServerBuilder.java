@@ -9,6 +9,7 @@ import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.util.resource.Resource;
 import org.hibernate.SessionFactory;
 import ru.otus.filter.AuthFilter;
+import ru.otus.service.FrontendService;
 import ru.otus.servlet.AdminServlet;
 import ru.otus.servlet.CreateUserServlet;
 import ru.otus.servlet.ListUserServlet;
@@ -23,9 +24,9 @@ public class ServerBuilder {
 		return this;
 	}
 
-	public ServerBuilder withContextHandler(SessionFactory sessionFactory) {
+	public ServerBuilder withContextHandler(SessionFactory sessionFactory, FrontendService frontendService) {
 		contextHandler.addServlet(new ServletHolder(new AdminServlet()), "/admin");
-		contextHandler.addServlet(new ServletHolder(new LoginServlet()), "/login");
+		contextHandler.addServlet(new ServletHolder(new LoginServlet(frontendService)), "/login");
 		contextHandler.addServlet(new ServletHolder(new ListUserServlet(sessionFactory)), "/list");
 		contextHandler.addServlet(new ServletHolder(new CreateUserServlet(sessionFactory)), "/create");
 
