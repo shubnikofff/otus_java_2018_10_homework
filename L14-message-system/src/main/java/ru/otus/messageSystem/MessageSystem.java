@@ -27,6 +27,7 @@ public final class MessageSystem {
 	}
 
 	public void sendMessage(Message message) {
+		logger.log(Level.INFO, "Send message from " + message.getFrom() + " to " + message.getTo());
 		messagesMap.get(message.getTo()).add(message);
 	}
 
