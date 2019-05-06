@@ -15,6 +15,10 @@ public class HibernateDao<T> implements Dao<T> {
 		this.session = session;
 	}
 
+	public HibernateDao(HibernateSessionFactoryBuilder sessionFactoryBuilder) {
+		session = sessionFactoryBuilder.build().openSession();
+	}
+
 	@Override
 	public <T> T load(long id, Class<T> clazz) {
 		return session.get(clazz, id);

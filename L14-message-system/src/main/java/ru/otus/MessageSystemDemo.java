@@ -3,9 +3,13 @@ package ru.otus;
 import org.eclipse.jetty.server.Server;
 import org.hibernate.SessionFactory;
 import ru.otus.app.MessageSystemContext;
+import ru.otus.app.service.AuthServiceImplementation;
+import ru.otus.app.service.DBServiceImplementation;
+import ru.otus.app.service.FrontendServiceImplementation;
 import ru.otus.dao.Dao;
 import ru.otus.dao.HibernateConfigurationBuilder;
 import ru.otus.dao.HibernateDao;
+import ru.otus.dao.HibernateSessionFactoryBuilder;
 import ru.otus.messageSystem.Address;
 import ru.otus.messageSystem.MessageSystem;
 import ru.otus.model.Phone;
@@ -38,8 +42,12 @@ public class MessageSystemDemo {
 				.setXmlConfig("hibernate.cfg.xml")
 				.addAnnotatedClasses(User.class, ru.otus.model.Address.class, Phone.class)
 				.getSessionFactory();
+//
+//		Dao dao = new HibernateDao(sessionFactory.openSession());
 
-		Dao dao = new HibernateDao(sessionFactory.openSession());
+		final HibernateSessionFactoryBuilder sessionFactoryBuilder = new HibernateSessionFactoryBuilder("hibernate.cfg.xml")
+				.withAnnotatedClasses(User.class, ru.otus.model.Address.class, Phone.class);
+		final Dao<User> dao = new HibernateDao<>(sessionFactoryBuilder);
 
 		DBService dbService = new DBServiceImplementation(dbAddress, dao, messageSystemContext);
 		dbService.registerInMessageSystem();

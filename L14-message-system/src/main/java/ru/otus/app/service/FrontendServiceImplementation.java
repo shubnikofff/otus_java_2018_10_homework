@@ -1,11 +1,13 @@
-package ru.otus.service;
+package ru.otus.app.service;
 
 import ru.otus.app.MessageSystemContext;
 import ru.otus.app.messages.AuthenticateRequestMessage;
 import ru.otus.app.messages.SaveUserRequestMessage;
 import ru.otus.messageSystem.Address;
 import ru.otus.messageSystem.MessageSystem;
+import ru.otus.model.Phone;
 import ru.otus.model.User;
+import ru.otus.service.FrontendService;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
@@ -69,6 +71,21 @@ public class FrontendServiceImplementation implements FrontendService {
 		String name = request.getParameter("name");
 		if (name != null) {
 			user.setName(name);
+		}
+
+		try {
+			user.setAge(Integer.parseInt(request.getParameter("age")));
+		} catch (NumberFormatException e) {
+			e.printStackTrace();
+		}
+
+		user.setAddress(new ru.otus.model.Address(request.getParameter("address")));
+
+		final String[] phones = request.getParameterValues("phone");
+		for (String phone : phones) {
+			if (!phone.equals("")) {
+				user.addPhone(new Phone(phone));
+			}
 		}
 
 		return user;

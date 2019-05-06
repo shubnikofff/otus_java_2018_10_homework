@@ -1,8 +1,9 @@
-package ru.otus.service;
+package ru.otus.app.service;
 
 import ru.otus.app.MessageSystemContext;
 import ru.otus.messageSystem.Address;
 import ru.otus.messageSystem.MessageSystem;
+import ru.otus.service.AuthService;
 
 public class AuthServiceImplementation implements AuthService {
 	private static final String ADMIN_LOGIN = "admin";

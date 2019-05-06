@@ -28,7 +28,7 @@ public class ServerBuilder {
 		contextHandler.addServlet(new ServletHolder(new AdminServlet()), "/admin");
 		contextHandler.addServlet(new ServletHolder(new LoginServlet(frontendService)), "/login");
 		contextHandler.addServlet(new ServletHolder(new ListUserServlet(sessionFactory)), "/list");
-		contextHandler.addServlet(new ServletHolder(new CreateUserServlet(sessionFactory)), "/create");
+		contextHandler.addServlet(new ServletHolder(new CreateUserServlet(frontendService)), "/create");
 
 		contextHandler.addFilter(new FilterHolder(new AuthFilter()), "/admin", null);
 		contextHandler.addFilter(new FilterHolder(new AuthFilter()), "/create", null);

@@ -1,6 +1,6 @@
 package ru.otus.servlet;
 
-import ru.otus.service.TemplateProcessor;
+import ru.otus.server.TemplateProcessor;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;

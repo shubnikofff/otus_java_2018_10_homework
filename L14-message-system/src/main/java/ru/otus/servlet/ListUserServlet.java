@@ -4,7 +4,7 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import ru.otus.dao.HibernateDao;
 import ru.otus.model.User;
-import ru.otus.service.TemplateProcessor;
+import ru.otus.server.TemplateProcessor;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
