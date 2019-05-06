@@ -3,6 +3,7 @@ package ru.otus.app.service;
 import ru.otus.app.MessageSystemContext;
 import ru.otus.app.messages.AuthenticateRequestMessage;
 import ru.otus.app.messages.SaveUserRequestMessage;
+import ru.otus.app.messages.UserListRequestMessage;
 import ru.otus.messageSystem.Address;
 import ru.otus.messageSystem.MessageSystem;
 import ru.otus.model.Phone;
@@ -16,6 +17,7 @@ public class FrontendServiceImplementation implements FrontendService {
 	private Address address;
 	private MessageSystemContext messageSystemContext;
 	private volatile Boolean auth;
+	private volatile List<User> userList;
 
 	public FrontendServiceImplementation(Address address, MessageSystemContext messageSystemContext) {
 		this.address = address;
@@ -24,6 +26,7 @@ public class FrontendServiceImplementation implements FrontendService {
 
 	@Override
 	public boolean auth(String login, String password) {
+		auth = null;
 		final AuthenticateRequestMessage message = new AuthenticateRequestMessage(address, messageSystemContext.getAuthAddress(), login, password);
 		messageSystemContext.getMessageSystem().sendMessage(message);
 
@@ -46,8 +49,21 @@ public class FrontendServiceImplementation implements FrontendService {
 	}
 
 	@Override
+	public void setUserList(List<User> userList) {
+		this.userList = userList;
+	}
+
+	@Override
 	public List<User> getUserList() {
-		return null;
+		userList = null;
+		final UserListRequestMessage message = new UserListRequestMessage(address, messageSystemContext.getDbAddress());
+		messageSystemContext.getMessageSystem().sendMessage(message);
+
+		while (userList == null) {
+			Thread.onSpinWait();
+		}
+
+		return userList;
 	}
 
 	@Override

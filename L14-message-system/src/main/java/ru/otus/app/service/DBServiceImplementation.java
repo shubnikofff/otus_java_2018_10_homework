@@ -27,7 +27,7 @@ public class DBServiceImplementation implements DBService {
 
 	@Override
 	public List<User> getAllUsers() {
-		return null;
+		return dao.getAll(User.class);
 	}
 
 	@Override
