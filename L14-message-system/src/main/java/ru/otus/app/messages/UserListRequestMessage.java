@@ -1,6 +1,6 @@
 package ru.otus.app.messages;
 
-import ru.otus.app.MessageToDB;
+import ru.otus.app.messageSystemContext.MessageToDB;
 import ru.otus.messageSystem.Address;
 import ru.otus.model.User;
 import ru.otus.service.DBService;

@@ -1,4 +1,4 @@
-package ru.otus.server;
+package ru.otus.webServer;
 
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.HandlerList;

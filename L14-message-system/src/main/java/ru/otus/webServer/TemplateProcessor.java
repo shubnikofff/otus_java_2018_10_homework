@@ -1,4 +1,4 @@
-package ru.otus.server;
+package ru.otus.webServer;
 
 import freemarker.template.Configuration;
 import freemarker.template.Template;

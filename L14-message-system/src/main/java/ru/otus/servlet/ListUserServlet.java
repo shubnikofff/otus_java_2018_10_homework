@@ -1,7 +1,7 @@
 package ru.otus.servlet;
 
 import ru.otus.model.User;
-import ru.otus.server.TemplateProcessor;
+import ru.otus.webServer.TemplateProcessor;
 import ru.otus.service.FrontendService;
 
 import javax.servlet.http.HttpServlet;
@@ -24,11 +24,6 @@ public class ListUserServlet extends HttpServlet {
 
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-		response.setContentType("text/html");
-
-//		try (Session session = sessionFactory.openSession()) {
-//			final HibernateDao<User> userHibernateDao = new HibernateDao<>(session);
-//			final List<User> userList = userHibernateDao.getAll(User.class);
 		final List<User> userList = frontendService.getUserList();
 		final HashMap<String, Object> variables = new HashMap<>();
 		variables.put(VARIABLE_USER_LIST, userList);
@@ -36,6 +31,5 @@ public class ListUserServlet extends HttpServlet {
 		response.setContentType("text/html;charset=utf-8");
 		response.getWriter().println(templateProcessor.getPage(TEMPLATE_FILE_NAME, variables));
 		response.setStatus(HttpServletResponse.SC_OK);
-//		}
 	}
 }

@@ -1,4 +1,4 @@
-package ru.otus.app;
+package ru.otus.app.messageSystemContext;
 
 import ru.otus.messageSystem.Address;
 import ru.otus.messageSystem.MessageSystem;

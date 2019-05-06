@@ -1,4 +1,4 @@
-package ru.otus.server;
+package ru.otus.webServer;
 
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.HandlerList;
@@ -7,7 +7,6 @@ import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.util.resource.Resource;
-import org.hibernate.SessionFactory;
 import ru.otus.filter.AuthFilter;
 import ru.otus.service.FrontendService;
 import ru.otus.servlet.AdminServlet;
@@ -24,7 +23,7 @@ public class ServerBuilder {
 		return this;
 	}
 
-	public ServerBuilder withContextHandler(SessionFactory sessionFactory, FrontendService frontendService) {
+	public ServerBuilder withContextHandler(FrontendService frontendService) {
 		contextHandler.addServlet(new ServletHolder(new AdminServlet()), "/admin");
 		contextHandler.addServlet(new ServletHolder(new LoginServlet(frontendService)), "/login");
 		contextHandler.addServlet(new ServletHolder(new ListUserServlet(frontendService)), "/list");

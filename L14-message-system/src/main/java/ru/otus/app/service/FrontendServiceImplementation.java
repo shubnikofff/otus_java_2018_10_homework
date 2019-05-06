@@ -1,6 +1,6 @@
 package ru.otus.app.service;
 
-import ru.otus.app.MessageSystemContext;
+import ru.otus.app.messageSystemContext.MessageSystemContext;
 import ru.otus.app.messages.AuthenticateRequestMessage;
 import ru.otus.app.messages.SaveUserRequestMessage;
 import ru.otus.app.messages.UserListRequestMessage;

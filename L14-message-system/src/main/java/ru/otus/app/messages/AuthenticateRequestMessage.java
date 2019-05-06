@@ -1,6 +1,6 @@
 package ru.otus.app.messages;
 
-import ru.otus.app.MessageToAuth;
+import ru.otus.app.messageSystemContext.MessageToAuth;
 import ru.otus.messageSystem.Address;
 import ru.otus.service.AuthService;
 

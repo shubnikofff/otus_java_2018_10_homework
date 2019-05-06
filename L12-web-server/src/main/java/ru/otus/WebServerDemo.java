@@ -6,7 +6,7 @@ import ru.otus.dao.HibernateConfigurationBuilder;
 import ru.otus.model.Address;
 import ru.otus.model.Phone;
 import ru.otus.model.User;
-import ru.otus.server.ServerBuilder;
+import ru.otus.webServer.ServerBuilder;
 
 public class WebServerDemo {
 	private Server server;
