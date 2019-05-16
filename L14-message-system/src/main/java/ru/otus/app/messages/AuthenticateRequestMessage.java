@@ -5,11 +5,13 @@ import ru.otus.messageSystem.Address;
 import ru.otus.service.AuthService;
 
 public class AuthenticateRequestMessage extends MessageToAuth {
-	private String login;
-	private String password;
+	private final String login;
+	private final String password;
+	private final int id;
 
-	public AuthenticateRequestMessage(Address from, Address to, String login, String password) {
+	public AuthenticateRequestMessage(int id, Address from, Address to, String login, String password) {
 		super(from, to);
+		this.id = id;
 		this.login = login;
 		this.password = password;
 	}
@@ -17,7 +19,7 @@ public class AuthenticateRequestMessage extends MessageToAuth {
 	@Override
 	public void exec(AuthService authService) {
 		final boolean result = authService.authenticate(login, password);
-		final AuthenticateResponseMessage message = new AuthenticateResponseMessage(getTo(), getFrom(), result);
+		final AuthenticateResponseMessage message = new AuthenticateResponseMessage(id, getTo(), getFrom(), result);
 
 		authService.getMessageSystem().sendMessage(message);
 	}

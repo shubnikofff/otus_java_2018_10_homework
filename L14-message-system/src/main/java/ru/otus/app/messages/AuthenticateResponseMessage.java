@@ -5,15 +5,21 @@ import ru.otus.messageSystem.Address;
 import ru.otus.service.FrontendService;
 
 public class AuthenticateResponseMessage extends MessageToFrontend {
-	private boolean authenticated;
+	private final int id;
+	private final boolean authenticated;
 
-	public AuthenticateResponseMessage(Address from, Address to, boolean authenticated) {
+	AuthenticateResponseMessage(int id, Address from, Address to, boolean authenticated) {
 		super(from, to);
+		this.id = id;
 		this.authenticated = authenticated;
 	}
 
 	@Override
 	public void exec(FrontendService frontendService) {
-		frontendService.setAuthResult(authenticated);
+		frontendService.putResponseMessage(id, this);
+	}
+
+	public boolean isAuthenticated() {
+		return authenticated;
 	}
 }
