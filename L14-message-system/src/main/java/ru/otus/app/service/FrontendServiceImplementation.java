@@ -1,10 +1,7 @@
 package ru.otus.app.service;
 
 import ru.otus.app.messageSystemContext.MessageSystemContext;
-import ru.otus.app.messages.AuthenticateRequestMessage;
-import ru.otus.app.messages.AuthenticateResponseMessage;
-import ru.otus.app.messages.SaveUserRequestMessage;
-import ru.otus.app.messages.UserListRequestMessage;
+import ru.otus.app.messages.*;
 import ru.otus.messageSystem.Address;
 import ru.otus.messageSystem.Message;
 import ru.otus.messageSystem.MessageSystem;
@@ -22,9 +19,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class FrontendServiceImplementation implements FrontendService {
 	private Address address;
 	private MessageSystemContext messageSystemContext;
-	private volatile List<User> userList;
 	private final static AtomicInteger idCounter = new AtomicInteger();
-	private final Map<Integer, LinkedBlockingQueue<Message>> messageMap = new HashMap<>();
+	private final Map<Integer, LinkedBlockingQueue<Message>> responseMessageMap = new HashMap<>();
 
 	public FrontendServiceImplementation(Address address, MessageSystemContext messageSystemContext) {
 		this.address = address;
@@ -37,7 +33,7 @@ public class FrontendServiceImplementation implements FrontendService {
 		int messageId = idCounter.incrementAndGet();
 		final AuthenticateRequestMessage message = new AuthenticateRequestMessage(messageId, address, messageSystemContext.getAuthAddress(), login, password);
 		LinkedBlockingQueue<Message> queue = new LinkedBlockingQueue<>();
-		messageMap.put(messageId, queue);
+		responseMessageMap.put(messageId, queue);
 		messageSystemContext.getMessageSystem().sendMessage(message);
 
 		while (auth == null) {
@@ -49,7 +45,7 @@ public class FrontendServiceImplementation implements FrontendService {
 			}
 		}
 
-		messageMap.remove(messageId);
+		responseMessageMap.remove(messageId);
 		return auth;
 	}
 
@@ -60,14 +56,9 @@ public class FrontendServiceImplementation implements FrontendService {
 	}
 
 	@Override
-	public void setUserList(List<User> userList) {
-		this.userList = userList;
-	}
-
-	@Override
 	public void putResponseMessage(int id, Message message) {
 		try {
-			messageMap.get(id).put(message);
+			responseMessageMap.get(id).put(message);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -75,14 +66,23 @@ public class FrontendServiceImplementation implements FrontendService {
 
 	@Override
 	public List<User> getUserList() {
-		userList = null;
-		final UserListRequestMessage message = new UserListRequestMessage(address, messageSystemContext.getDbAddress());
+		List<User> userList = null;
+		int messageId = idCounter.incrementAndGet();
+		final UserListRequestMessage message = new UserListRequestMessage(messageId, address, messageSystemContext.getDbAddress());
+		LinkedBlockingQueue<Message> queue = new LinkedBlockingQueue<>();
+		responseMessageMap.put(messageId, queue);
 		messageSystemContext.getMessageSystem().sendMessage(message);
 
 		while (userList == null) {
-			Thread.onSpinWait();
+			try {
+				UserListResponseMessage response = (UserListResponseMessage) queue.take();
+				userList = response.getUserList();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 		}
 
+		responseMessageMap.remove(messageId);
 		return userList;
 	}
 

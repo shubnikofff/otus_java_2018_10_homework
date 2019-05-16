@@ -8,14 +8,17 @@ import ru.otus.service.DBService;
 import java.util.List;
 
 public class UserListRequestMessage extends MessageToDB {
-	public UserListRequestMessage(Address from, Address to) {
+	private final int id;
+
+	public UserListRequestMessage( int id, Address from, Address to) {
 		super(from, to);
+		this.id = id;
 	}
 
 	@Override
 	public void exec(DBService dbService) {
 		final List<User> userList = dbService.getAllUsers();
-		final UserListResponseMessage message = new UserListResponseMessage(getTo(), getFrom(), userList);
+		final UserListResponseMessage message = new UserListResponseMessage(id, getTo(), getFrom(), userList);
 
 		dbService.getMessageSystem().sendMessage(message);
 	}

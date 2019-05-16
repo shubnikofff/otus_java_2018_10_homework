@@ -8,15 +8,21 @@ import ru.otus.service.FrontendService;
 import java.util.List;
 
 public class UserListResponseMessage extends MessageToFrontend {
+	private int id;
 	private List<User> userList;
 
-	public UserListResponseMessage(Address from, Address to, List<User> userList) {
+	UserListResponseMessage(int id, Address from, Address to, List<User> userList) {
 		super(from, to);
+		this.id = id;
 		this.userList = userList;
 	}
 
 	@Override
 	public void exec(FrontendService frontendService) {
-		frontendService.setUserList(userList);
+		frontendService.putResponseMessage(id, this);
+	}
+
+	public List<User> getUserList() {
+		return userList;
 	}
 }

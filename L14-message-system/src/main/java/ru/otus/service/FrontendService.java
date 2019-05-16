@@ -11,8 +11,6 @@ public interface FrontendService extends Service {
 
 	void createUser(HttpServletRequest request);
 
-	void setUserList(List<User> userList);
-
 	void putResponseMessage(int id, Message message);
 
 	List<User> getUserList();
