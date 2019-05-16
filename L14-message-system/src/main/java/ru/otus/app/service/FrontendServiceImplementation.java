@@ -33,37 +33,24 @@ public class FrontendServiceImplementation implements FrontendService {
 
 	@Override
 	public boolean auth(String login, String password) {
-		var ref = new Object() {
-			Boolean auth = null;
-		};
-
+		Boolean auth = null;
 		int messageId = idCounter.incrementAndGet();
 		final AuthenticateRequestMessage message = new AuthenticateRequestMessage(messageId, address, messageSystemContext.getAuthAddress(), login, password);
 		LinkedBlockingQueue<Message> queue = new LinkedBlockingQueue<>();
 		messageMap.put(messageId, queue);
 		messageSystemContext.getMessageSystem().sendMessage(message);
 
-
-		Thread thread = new Thread(() -> {
-			while (ref.auth == null) {
-				try {
-					AuthenticateResponseMessage response = (AuthenticateResponseMessage)queue.take();
-					ref.auth = response.isAuthenticated();
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
+		while (auth == null) {
+			try {
+				AuthenticateResponseMessage response = (AuthenticateResponseMessage) queue.take();
+				auth = response.isAuthenticated();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
 			}
-		});
-
-		thread.start();
-		try {
-			thread.join();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
 		}
 
 		messageMap.remove(messageId);
-		return ref.auth;
+		return auth;
 	}
 
 	@Override
