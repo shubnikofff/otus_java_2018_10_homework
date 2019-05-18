@@ -8,8 +8,8 @@ import ru.otus.service.DBService;
 public class SaveUserRequestMessage extends MessageToDB {
 	private User user;
 
-	public SaveUserRequestMessage(Address from, Address to, User user) {
-		super(from, to);
+	public SaveUserRequestMessage(int id, Address from, Address to, User user) {
+		super(id, from, to);
 		this.user = user;
 	}
 

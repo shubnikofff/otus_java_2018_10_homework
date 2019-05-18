@@ -28,7 +28,7 @@ public class FrontendServiceImplementation implements FrontendService {
 	}
 
 	@Override
-	public boolean auth(String login, String password) {
+	public Boolean auth(String login, String password) {
 		Boolean auth = null;
 		int messageId = idCounter.incrementAndGet();
 		final AuthenticateRequestMessage message = new AuthenticateRequestMessage(messageId, address, messageSystemContext.getAuthAddress(), login, password);
@@ -36,13 +36,11 @@ public class FrontendServiceImplementation implements FrontendService {
 		responseMessageMap.put(messageId, queue);
 		messageSystemContext.getMessageSystem().sendMessage(message);
 
-		while (auth == null) {
-			try {
-				AuthenticateResponseMessage response = (AuthenticateResponseMessage) queue.take();
-				auth = response.isAuthenticated();
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
+		try {
+			AuthenticateResponseMessage response = (AuthenticateResponseMessage) queue.take();
+			auth = response.isAuthenticated();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
 		}
 
 		responseMessageMap.remove(messageId);
@@ -51,7 +49,7 @@ public class FrontendServiceImplementation implements FrontendService {
 
 	@Override
 	public void createUser(HttpServletRequest request) {
-		final SaveUserRequestMessage message = new SaveUserRequestMessage(address, messageSystemContext.getDbAddress(), getUserFromRequest(request));
+		final SaveUserRequestMessage message = new SaveUserRequestMessage( idCounter.incrementAndGet(), address, messageSystemContext.getDbAddress(), getUserFromRequest(request));
 		messageSystemContext.getMessageSystem().sendMessage(message);
 	}
 
@@ -73,13 +71,11 @@ public class FrontendServiceImplementation implements FrontendService {
 		responseMessageMap.put(messageId, queue);
 		messageSystemContext.getMessageSystem().sendMessage(message);
 
-		while (userList == null) {
-			try {
-				UserListResponseMessage response = (UserListResponseMessage) queue.take();
-				userList = response.getUserList();
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
+		try {
+			UserListResponseMessage response = (UserListResponseMessage) queue.take();
+			userList = response.getUserList();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
 		}
 
 		responseMessageMap.remove(messageId);
@@ -99,6 +95,10 @@ public class FrontendServiceImplementation implements FrontendService {
 	@Override
 	public MessageSystem getMessageSystem() {
 		return messageSystemContext.getMessageSystem();
+	}
+
+	private void sendMessage(Message message) {
+
 	}
 
 	private User getUserFromRequest(HttpServletRequest request) {

@@ -7,7 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 public interface FrontendService extends Service {
-	boolean auth(String login, String password);
+	Boolean auth(String login, String password);
 
 	void createUser(HttpServletRequest request);
 

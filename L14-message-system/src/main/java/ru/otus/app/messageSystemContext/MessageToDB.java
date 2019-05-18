@@ -6,8 +6,9 @@ import ru.otus.messageSystem.Message;
 import ru.otus.service.DBService;
 
 public abstract class MessageToDB extends Message {
-	public MessageToDB(Address from, Address to) {
-		super(from, to);
+
+	public MessageToDB(int id, Address from, Address to) {
+		super(id, from, to);
 	}
 
 	@Override

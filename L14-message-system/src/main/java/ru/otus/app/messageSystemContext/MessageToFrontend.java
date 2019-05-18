@@ -6,8 +6,8 @@ import ru.otus.messageSystem.Message;
 import ru.otus.service.FrontendService;
 
 public abstract class MessageToFrontend extends Message {
-	public MessageToFrontend(Address from, Address to) {
-		super(from, to);
+	public MessageToFrontend(int id, Address from, Address to) {
+		super(id, from, to);
 	}
 
 	@Override

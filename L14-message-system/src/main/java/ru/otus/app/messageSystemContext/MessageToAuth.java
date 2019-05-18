@@ -6,9 +6,8 @@ import ru.otus.messageSystem.Message;
 import ru.otus.service.AuthService;
 
 public abstract class MessageToAuth extends Message {
-
-	public MessageToAuth(Address from, Address to) {
-		super(from, to);
+	public MessageToAuth(int id, Address from, Address to) {
+		super(id, from, to);
 	}
 
 	@Override
