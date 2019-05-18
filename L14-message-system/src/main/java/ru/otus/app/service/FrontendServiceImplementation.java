@@ -19,7 +19,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class FrontendServiceImplementation implements FrontendService {
 	private Address address;
 	private MessageSystemContext messageSystemContext;
-	private final static AtomicInteger idCounter = new AtomicInteger();
+	private final static AtomicInteger ID_COUNTER = new AtomicInteger();
 	private final Map<Integer, LinkedBlockingQueue<Message>> responseMessageMap = new HashMap<>();
 
 	public FrontendServiceImplementation(Address address, MessageSystemContext messageSystemContext) {
@@ -29,27 +29,14 @@ public class FrontendServiceImplementation implements FrontendService {
 
 	@Override
 	public Boolean auth(String login, String password) {
-		Boolean auth = null;
-		int messageId = idCounter.incrementAndGet();
-		final AuthenticateRequestMessage message = new AuthenticateRequestMessage(messageId, address, messageSystemContext.getAuthAddress(), login, password);
-		LinkedBlockingQueue<Message> queue = new LinkedBlockingQueue<>();
-		responseMessageMap.put(messageId, queue);
-		messageSystemContext.getMessageSystem().sendMessage(message);
-
-		try {
-			AuthenticateResponseMessage response = (AuthenticateResponseMessage) queue.take();
-			auth = response.isAuthenticated();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-
-		responseMessageMap.remove(messageId);
-		return auth;
+		final AuthenticateRequestMessage message = new AuthenticateRequestMessage(ID_COUNTER.incrementAndGet(), address, messageSystemContext.getAuthAddress(), login, password);
+		AuthenticateResponseMessage response = (AuthenticateResponseMessage) sendRequest(message);
+		return response.isAuthenticated();
 	}
 
 	@Override
 	public void createUser(HttpServletRequest request) {
-		final SaveUserRequestMessage message = new SaveUserRequestMessage( idCounter.incrementAndGet(), address, messageSystemContext.getDbAddress(), getUserFromRequest(request));
+		final SaveUserRequestMessage message = new SaveUserRequestMessage(ID_COUNTER.incrementAndGet(), address, messageSystemContext.getDbAddress(), getUserFromRequest(request));
 		messageSystemContext.getMessageSystem().sendMessage(message);
 	}
 
@@ -64,22 +51,9 @@ public class FrontendServiceImplementation implements FrontendService {
 
 	@Override
 	public List<User> getUserList() {
-		List<User> userList = null;
-		int messageId = idCounter.incrementAndGet();
-		final UserListRequestMessage message = new UserListRequestMessage(messageId, address, messageSystemContext.getDbAddress());
-		LinkedBlockingQueue<Message> queue = new LinkedBlockingQueue<>();
-		responseMessageMap.put(messageId, queue);
-		messageSystemContext.getMessageSystem().sendMessage(message);
-
-		try {
-			UserListResponseMessage response = (UserListResponseMessage) queue.take();
-			userList = response.getUserList();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-
-		responseMessageMap.remove(messageId);
-		return userList;
+		final UserListRequestMessage message = new UserListRequestMessage(ID_COUNTER.incrementAndGet(), address, messageSystemContext.getDbAddress());
+		UserListResponseMessage response = (UserListResponseMessage) sendRequest(message);
+		return response.getUserList();
 	}
 
 	@Override
@@ -97,8 +71,21 @@ public class FrontendServiceImplementation implements FrontendService {
 		return messageSystemContext.getMessageSystem();
 	}
 
-	private void sendMessage(Message message) {
+	private Message sendRequest(Message message) {
+		LinkedBlockingQueue<Message> queue = new LinkedBlockingQueue<>();
+		int messageId = message.getId();
+		responseMessageMap.put(messageId, queue);
+		messageSystemContext.getMessageSystem().sendMessage(message);
+		Message response = null;
 
+		try {
+			response = queue.take();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+
+		responseMessageMap.remove(messageId);
+		return response;
 	}
 
 	private User getUserFromRequest(HttpServletRequest request) {
