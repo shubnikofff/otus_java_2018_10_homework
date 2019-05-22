@@ -9,6 +9,10 @@
 
     <description>Message system demo</description>
 
+    <listener>
+        <listener-class>ru.otus.servlet.SpringContextListener</listener-class>
+    </listener>
+
     <servlet>
         <servlet-name>adminServlet</servlet-name>
         <servlet-class>ru.otus.servlet.AdminServlet</servlet-class>

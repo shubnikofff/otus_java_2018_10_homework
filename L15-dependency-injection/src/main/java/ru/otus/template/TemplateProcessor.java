@@ -10,13 +10,11 @@ import java.io.Writer;
 import java.util.HashMap;
 
 public class TemplateProcessor {
-	private static final String TEMPLATE_DIR = "/template";
-
 	private Configuration configuration;
 
-	public TemplateProcessor() {
+	public TemplateProcessor(String templateDir) {
 		configuration = new Configuration(Configuration.VERSION_2_3_28);
-		configuration.setClassForTemplateLoading(this.getClass(), TEMPLATE_DIR);
+		configuration.setClassForTemplateLoading(this.getClass(), templateDir);
 		configuration.setDefaultEncoding("UTF-8");
 	}
 

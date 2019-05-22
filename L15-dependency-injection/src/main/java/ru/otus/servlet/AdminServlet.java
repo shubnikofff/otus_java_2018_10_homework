@@ -1,6 +1,6 @@
 package ru.otus.servlet;
 
-import org.springframework.web.context.support.SpringBeanAutowiringSupport;
+import org.springframework.context.ApplicationContext;
 import ru.otus.template.TemplateProcessor;
 
 import javax.servlet.ServletConfig;
@@ -14,12 +14,13 @@ import java.util.HashMap;
 public class AdminServlet extends HttpServlet {
 	private static final String TEMPLATE_FILE_NAME = "admin.ftl";
 
-	private TemplateProcessor templateProcessor = new TemplateProcessor();
+	private TemplateProcessor templateProcessor;
 
 	@Override
 	public void init(ServletConfig config) throws ServletException {
 		super.init(config);
-		SpringBeanAutowiringSupport.processInjectionBasedOnCurrentContext(this);
+		final ApplicationContext ac = (ApplicationContext) config.getServletContext().getAttribute("applicationContext");
+		templateProcessor = (TemplateProcessor) ac.getBean("templateProcessor");
 	}
 
 	@Override
