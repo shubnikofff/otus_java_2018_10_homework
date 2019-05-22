@@ -5,12 +5,12 @@
 		 http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
          version="3.1">
 
-    <display-name>L15-dependency-injection1</display-name>
+    <display-name>Dependency injection demo</display-name>
 
-    <description>Message system demo</description>
+    <description>Homework #15</description>
 
     <listener>
-        <listener-class>ru.otus.servlet.SpringContextListener</listener-class>
+        <listener-class>ru.otus.listener.SpringContextListener</listener-class>
     </listener>
 
     <servlet>

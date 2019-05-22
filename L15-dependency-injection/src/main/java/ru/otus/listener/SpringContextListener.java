@@ -1,4 +1,4 @@
-package ru.otus.servlet;
+package ru.otus.listener;
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
