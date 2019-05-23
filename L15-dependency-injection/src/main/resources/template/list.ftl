@@ -1,7 +1,7 @@
 <html lang="en">
     <head>
         <title>User list</title>
-        <link rel="stylesheet" type="text/css" href="/css/list.css">
+        <link rel="stylesheet" type="text/css" href="css/list.css">
     </head>
     <body>
         <div>

@@ -1,7 +1,7 @@
 <html lang="en">
     <head>
         <title>Admin page</title>
-        <link rel="stylesheet" type="text/css" href="/css/admin.css">
+        <link rel="stylesheet" type="text/css" href="css/admin.css">
     </head>
     <body>
         <h3>Admin page</h3>

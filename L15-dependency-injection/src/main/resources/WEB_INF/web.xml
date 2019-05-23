@@ -33,6 +33,16 @@
         <url-pattern>login</url-pattern>
     </servlet-mapping>
 
+    <servlet>
+        <servlet-name>listServlet</servlet-name>
+        <servlet-class>ru.otus.servlet.ListUserServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>listServlet</servlet-name>
+        <url-pattern>list</url-pattern>
+    </servlet-mapping>
+
     <filter>
         <filter-name>authFilter</filter-name>
         <filter-class>ru.otus.filter.AuthFilter</filter-class>
