@@ -4,13 +4,13 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
     <bean id="templateProcessor" class="ru.otus.template.TemplateProcessor">
-        <constructor-arg name="templateDir" value="/template" />
+        <constructor-arg name="templateDir" value="/template"/>
     </bean>
 
-    <bean id="messageSystem" class="ru.otus.messageSystem.MessageSystem" destroy-method="dispose" />
+    <bean id="messageSystem" class="ru.otus.messageSystem.MessageSystem" destroy-method="dispose"/>
 
     <bean id="authAddress" class="ru.otus.messageSystem.Address">
-        <constructor-arg name="id" value="Auth Service" />
+        <constructor-arg name="id" value="Auth Service"/>
     </bean>
 
     <bean id="dbAddress" class="ru.otus.messageSystem.Address">
@@ -18,18 +18,24 @@
     </bean>
 
     <bean id="frontendAddress" class="ru.otus.messageSystem.Address">
-        <constructor-arg name="id" value="Frontend Service" />
+        <constructor-arg name="id" value="Frontend Service"/>
     </bean>
 
     <bean id="messageSystemContext" class="ru.otus.app.messageSystemContext.MessageSystemContext">
-        <constructor-arg name="messageSystem" ref="messageSystem" />
+        <constructor-arg name="messageSystem" ref="messageSystem"/>
         <constructor-arg name="authAddress" ref="authAddress"/>
         <constructor-arg name="dbAddress" ref="dbAddress"/>
         <constructor-arg name="frontendAddress" ref="frontendAddress"/>
     </bean>
 
-    <bean id="frontendService" class="ru.otus.app.service.FrontendServiceImplementation">
-        <constructor-arg name="address" ref="frontendAddress" />
+    <bean id="frontendService" class="ru.otus.app.service.FrontendServiceImplementation" init-method="registerInMessageSystem">
+        <constructor-arg name="address" ref="frontendAddress"/>
         <constructor-arg name="messageSystemContext" ref="messageSystemContext"/>
     </bean>
+
+    <bean id="authService" class="ru.otus.app.service.AuthServiceImplementation" init-method="registerInMessageSystem">
+        <constructor-arg name="address" ref="authAddress"/>
+        <constructor-arg name="messageSystemContext" ref="messageSystemContext"/>
+    </bean>
+
 </beans>

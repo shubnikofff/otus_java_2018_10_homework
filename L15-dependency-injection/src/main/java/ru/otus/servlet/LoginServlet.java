@@ -26,9 +26,9 @@ public class LoginServlet extends HttpServlet {
 
 		if(result) {
 			request.getSession();
-			response.sendRedirect("/admin");
+			response.sendRedirect("admin");
 		} else {
-			response.sendRedirect("/login.html");
+			response.sendRedirect("login.html");
 		}
 	}
 }
