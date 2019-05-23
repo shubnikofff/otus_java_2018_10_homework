@@ -7,4 +7,7 @@
         <constructor-arg name="templateDir" value="/template" />
     </bean>
 
+    <bean id="messageSystem" class="ru.otus.messageSystem.MessageSystem" destroy-method="dispose" />
+
+
 </beans>
