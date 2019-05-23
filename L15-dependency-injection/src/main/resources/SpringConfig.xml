@@ -28,17 +28,6 @@
         <constructor-arg name="frontendAddress" ref="frontendAddress"/>
     </bean>
 
-    <bean id="frontendService" class="ru.otus.app.service.FrontendServiceImplementation"
-          init-method="registerInMessageSystem">
-        <constructor-arg name="address" ref="frontendAddress"/>
-        <constructor-arg name="messageSystemContext" ref="messageSystemContext"/>
-    </bean>
-
-    <bean id="authService" class="ru.otus.app.service.AuthServiceImplementation" init-method="registerInMessageSystem">
-        <constructor-arg name="address" ref="authAddress"/>
-        <constructor-arg name="messageSystemContext" ref="messageSystemContext"/>
-    </bean>
-
     <bean id="daoFactory" class="ru.otus.dao.HibernateDaoFactory">
         <constructor-arg name="configPath" value="hibernate.cfg.xml"/>
     </bean>
@@ -51,6 +40,23 @@
                 <value type="java.lang.Class">ru.otus.model.Address</value>
             </list>
         </constructor-arg>
+    </bean>
+
+    <bean id="authService" class="ru.otus.app.service.AuthServiceImplementation" init-method="registerInMessageSystem">
+        <constructor-arg name="address" ref="authAddress"/>
+        <constructor-arg name="messageSystemContext" ref="messageSystemContext"/>
+    </bean>
+
+    <bean id="dbService" class="ru.otus.app.service.DBServiceImplementation">
+        <constructor-arg name="address" ref="dbAddress"/>
+        <constructor-arg name="dao" ref="dao"/>
+        <constructor-arg name="messageSystemContext" ref="messageSystemContext"/>
+    </bean>
+
+    <bean id="frontendService" class="ru.otus.app.service.FrontendServiceImplementation"
+          init-method="registerInMessageSystem">
+        <constructor-arg name="address" ref="frontendAddress"/>
+        <constructor-arg name="messageSystemContext" ref="messageSystemContext"/>
     </bean>
 
 </beans>
