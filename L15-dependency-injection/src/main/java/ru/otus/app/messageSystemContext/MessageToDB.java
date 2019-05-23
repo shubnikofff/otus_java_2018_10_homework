@@ -1,0 +1,22 @@
+package ru.otus.app.messageSystemContext;
+
+import ru.otus.messageSystem.Address;
+import ru.otus.messageSystem.Addressee;
+import ru.otus.messageSystem.Message;
+import ru.otus.service.DBService;
+
+public abstract class MessageToDB extends Message {
+
+	public MessageToDB(int id, Address from, Address to) {
+		super(id, from, to);
+	}
+
+	@Override
+	public void exec(Addressee addressee) {
+		if (addressee instanceof DBService) {
+			exec((DBService) addressee);
+		}
+	}
+
+	public abstract void exec(DBService dbService);
+}

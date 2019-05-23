@@ -9,5 +9,22 @@
 
     <bean id="messageSystem" class="ru.otus.messageSystem.MessageSystem" destroy-method="dispose" />
 
+    <bean id="authAddress" class="ru.otus.messageSystem.Address">
+        <constructor-arg name="id" value="Auth Service" />
+    </bean>
 
+    <bean id="dbAddress" class="ru.otus.messageSystem.Address">
+        <constructor-arg name="id" value="DB Service"/>
+    </bean>
+
+    <bean id="frontendAddress" class="ru.otus.messageSystem.Address">
+        <constructor-arg name="id" value="Frontend Service" />
+    </bean>
+
+    <bean id="msContext" class="ru.otus.app.messageSystemContext.MessageSystemContext">
+        <constructor-arg name="messageSystem" value="messageSystem"/>
+        <constructor-arg name="authAddress" value="authAddress"/>
+        <constructor-arg name="dbAddress" value="dbAddress"/>
+        <constructor-arg name="frontendAddress" value="frontendAddress"/>
+    </bean>
 </beans>
