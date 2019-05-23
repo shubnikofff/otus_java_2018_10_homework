@@ -43,6 +43,16 @@
         <url-pattern>list</url-pattern>
     </servlet-mapping>
 
+    <servlet>
+        <servlet-name>createServlet</servlet-name>
+        <servlet-class>ru.otus.servlet.CreateUserServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>createServlet</servlet-name>
+        <url-pattern>create</url-pattern>
+    </servlet-mapping>
+
     <filter>
         <filter-name>authFilter</filter-name>
         <filter-class>ru.otus.filter.AuthFilter</filter-class>

@@ -47,7 +47,7 @@
         <constructor-arg name="messageSystemContext" ref="messageSystemContext"/>
     </bean>
 
-    <bean id="dbService" class="ru.otus.app.service.DBServiceImplementation">
+    <bean id="dbService" class="ru.otus.app.service.DBServiceImplementation" init-method="registerInMessageSystem">
         <constructor-arg name="address" ref="dbAddress"/>
         <constructor-arg name="dao" ref="dao"/>
         <constructor-arg name="messageSystemContext" ref="messageSystemContext"/>
