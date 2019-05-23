@@ -22,9 +22,9 @@
     </bean>
 
     <bean id="msContext" class="ru.otus.app.messageSystemContext.MessageSystemContext">
-        <constructor-arg name="messageSystem" value="messageSystem"/>
-        <constructor-arg name="authAddress" value="authAddress"/>
-        <constructor-arg name="dbAddress" value="dbAddress"/>
-        <constructor-arg name="frontendAddress" value="frontendAddress"/>
+        <constructor-arg name="messageSystem" ref="messageSystem" />
+        <constructor-arg name="authAddress" ref="authAddress"/>
+        <constructor-arg name="dbAddress" ref="dbAddress"/>
+        <constructor-arg name="frontendAddress" ref="frontendAddress"/>
     </bean>
 </beans>
