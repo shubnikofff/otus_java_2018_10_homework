@@ -10,8 +10,13 @@
     <description>Homework #15</description>
 
     <listener>
-        <listener-class>ru.otus.listener.SpringContextListener</listener-class>
+        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
     </listener>
+
+    <context-param>
+        <param-name>contextConfigLocation</param-name>
+        <param-value>/WEB_INF/applicationContext.xml</param-value>
+    </context-param>
 
     <servlet>
         <servlet-name>adminServlet</servlet-name>

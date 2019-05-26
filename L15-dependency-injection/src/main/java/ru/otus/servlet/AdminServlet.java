@@ -1,10 +1,8 @@
 package ru.otus.servlet;
 
-import org.springframework.context.ApplicationContext;
+import org.springframework.beans.factory.annotation.Autowired;
 import ru.otus.template.TemplateProcessor;
 
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -14,14 +12,8 @@ import java.util.HashMap;
 public class AdminServlet extends HttpServlet {
 	private static final String TEMPLATE_FILE_NAME = "admin.ftl";
 
+	@Autowired
 	private TemplateProcessor templateProcessor;
-
-	@Override
-	public void init(ServletConfig config) throws ServletException {
-		super.init(config);
-		final ApplicationContext ac = (ApplicationContext) config.getServletContext().getAttribute("applicationContext");
-		templateProcessor = (TemplateProcessor) ac.getBean("templateProcessor");
-	}
 
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
