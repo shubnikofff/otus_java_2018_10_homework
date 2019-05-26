@@ -1,6 +1,7 @@
 package ru.otus.servlet;
 
-import org.springframework.context.ApplicationContext;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 import ru.otus.model.User;
 import ru.otus.service.FrontendService;
 import ru.otus.template.TemplateProcessor;
@@ -18,15 +19,16 @@ public class ListUserServlet extends HttpServlet {
 	private static final String VARIABLE_USER_LIST = "userList";
 	private static final String TEMPLATE_FILE_NAME = "list.ftl";
 
+	@Autowired
 	private FrontendService frontendService;
+
+	@Autowired
 	private TemplateProcessor templateProcessor;
 
 	@Override
 	public void init(ServletConfig config) throws ServletException {
 		super.init(config);
-		final ApplicationContext ac = (ApplicationContext) config.getServletContext().getAttribute("applicationContext");
-		frontendService = (FrontendService) ac.getBean("frontendService");
-		templateProcessor = (TemplateProcessor) ac.getBean("templateProcessor");
+		SpringBeanAutowiringSupport.processInjectionBasedOnServletContext(this, config.getServletContext());
 	}
 
 	@Override

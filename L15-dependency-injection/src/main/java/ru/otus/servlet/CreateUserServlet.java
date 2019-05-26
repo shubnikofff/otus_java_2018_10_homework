@@ -1,6 +1,7 @@
 package ru.otus.servlet;
 
-import org.springframework.context.ApplicationContext;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 import ru.otus.service.FrontendService;
 
 import javax.servlet.ServletConfig;
@@ -11,13 +12,13 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 public class CreateUserServlet extends HttpServlet {
+	@Autowired
 	private FrontendService frontendService;
 
 	@Override
 	public void init(ServletConfig config) throws ServletException {
 		super.init(config);
-		final ApplicationContext ac = (ApplicationContext) config.getServletContext().getAttribute("applicationContext");
-		frontendService = (FrontendService) ac.getBean("frontendService");
+		SpringBeanAutowiringSupport.processInjectionBasedOnServletContext(this, config.getServletContext());
 	}
 
 	@Override
