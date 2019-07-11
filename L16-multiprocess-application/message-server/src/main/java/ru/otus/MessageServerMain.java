@@ -7,7 +7,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-public class MessageServer {
+public class MessageServerMain {
 	public static void main(String[] args) {
 //		ProcessRunner processRunner = new ProcessRunner();
 //		try {
@@ -16,7 +16,7 @@ public class MessageServer {
 //		} catch (IOException e) {
 //			e.printStackTrace();
 //		}
-		new MessageServer().start();
+		new MessageServerMain().start();
 	}
 
 	private void start() {

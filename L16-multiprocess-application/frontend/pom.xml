@@ -32,7 +32,7 @@
                     </descriptorRefs>
                     <archive>
                         <manifest>
-                            <mainClass>ru.otus.Frontend</mainClass>
+                            <mainClass>ru.otus.FrontendMain</mainClass>
                         </manifest>
                     </archive>
                 </configuration>

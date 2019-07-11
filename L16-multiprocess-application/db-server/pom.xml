@@ -32,7 +32,7 @@
                     </descriptorRefs>
                     <archive>
                         <manifest>
-                            <mainClass>ru.otus.DbServer</mainClass>
+                            <mainClass>ru.otus.DbServerMain</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
