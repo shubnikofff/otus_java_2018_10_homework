@@ -32,7 +32,7 @@
                     </descriptorRefs>
                     <archive>
                         <manifest>
-                            <mainClass>ru.otus.MessageServerMain</mainClass>
+                            <mainClass>ru.otus.MessageServer</mainClass>
                         </manifest>
                     </archive>
                 </configuration>

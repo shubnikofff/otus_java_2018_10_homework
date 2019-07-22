@@ -1,5 +1,8 @@
 package ru.otus.application.service;
 
+import org.springframework.stereotype.Service;
+import ru.otus.domain.service.ProcessRunner;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -7,16 +10,18 @@ import java.io.InputStreamReader;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class ProcessRunner implements ru.otus.domain.service.ProcessRunner {
+@Service
+public class ProcessRunnerImplementation implements ProcessRunner {
 	private static final String COMMAND_LINE_SEPARATOR = " ";
 
 	private Process process;
 	private final StringBuffer output = new StringBuffer();
+	private final Logger logger = Logger.getLogger(ProcessRunnerImplementation.class.getName());
 
 	@Override
 	public void start(String command) throws IOException {
 		process = runProcess(command);
-		System.out.println("Start process with PID: " + process.pid());
+		logger.info("Command: \"" + command + "\" started with PID " + process.pid());
 	}
 
 	@Override
