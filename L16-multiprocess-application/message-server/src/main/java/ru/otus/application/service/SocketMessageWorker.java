@@ -24,14 +24,19 @@ public class SocketMessageWorker implements MessageWorker {
 	private final ExecutorService executorService = Executors.newFixedThreadPool(THREADS_NUMBER);
 	private final Logger logger = Logger.getLogger(SocketMessageWorker.class.getName());
 	private final Socket socket;
+	private final Gson gson = new Gson();
 
 	public SocketMessageWorker(Socket socket) {
 		this.socket = socket;
 	}
 
-	public void run() {
+	public void start() {
 		executorService.execute(this::readFromSocket);
 		executorService.execute(this::writeToSocket);
+	}
+
+	public void stop() {
+		executorService.shutdown();
 	}
 
 	@Override
@@ -71,7 +76,6 @@ public class SocketMessageWorker implements MessageWorker {
 	private void writeToSocket() {
 		try (PrintWriter writer = new PrintWriter(socket.getOutputStream(), true)) {
 			while (socket.isConnected()) {
-				final Gson gson = new Gson();
 				final String json = gson.toJson(outputQueue.take());
 				writer.println(json);
 				writer.println();
@@ -81,7 +85,7 @@ public class SocketMessageWorker implements MessageWorker {
 		}
 	}
 
-	private static Message getMessageFromJson(String json) {
-		return new Message();
+	private Message getMessageFromJson(String json) {
+		return gson.fromJson(json, Message.class);
 	}
 }
