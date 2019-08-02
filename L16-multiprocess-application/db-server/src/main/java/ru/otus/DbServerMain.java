@@ -25,14 +25,12 @@ public class DbServerMain {
 			socketMessageWorker.start();
 
 			Thread.sleep(2000);
-			int count = 0;
 			while (true) {
 				final Message message = socketMessageWorker.pollMessage();
 				if(message != null) {
 					System.out.println("Received message from: " + message.getFrom());
 				}
 				Thread.sleep(1000);
-				count++;
 			}
 		} catch (IOException e) {
 			e.printStackTrace();

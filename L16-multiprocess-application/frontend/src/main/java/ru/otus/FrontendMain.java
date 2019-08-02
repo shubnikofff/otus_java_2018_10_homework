@@ -1,7 +1,7 @@
 package ru.otus;
 
 import ru.otus.application.service.SocketMessageWorker;
-import ru.otus.message.Message;
+import ru.otus.message.UserListRequest;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -26,7 +26,7 @@ public class FrontendMain {
 
 			int count = 0;
 			while (count < 10) {
-				socketMessageWorker.sendMessage(new Message(args[0], "DB#1"));
+				socketMessageWorker.sendMessage(new UserListRequest(args[0]));
 				Thread.sleep(1000);
 				count++;
 			}
