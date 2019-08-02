@@ -1,6 +1,9 @@
 package ru.otus.application.service;
 
 import com.google.gson.Gson;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import ru.otus.domain.service.MessageWorker;
 import ru.otus.message.Message;
 
@@ -66,7 +69,7 @@ public class SocketMessageWorker implements MessageWorker {
 					stringBuilder = new StringBuilder();
 				}
 			}
-		} catch (IOException e) {
+		} catch (Exception e) {
 			logger.log(Level.SEVERE, e.getMessage());
 		} finally {
 			executorService.shutdown();
@@ -85,7 +88,10 @@ public class SocketMessageWorker implements MessageWorker {
 		}
 	}
 
-	private Message getMessageFromJson(String json) {
-		return gson.fromJson(json, Message.class);
+	private Message getMessageFromJson(String json) throws ParseException, ClassNotFoundException {
+		final JSONObject jsonObject = (JSONObject) (new JSONParser().parse(json));
+		final String className = (String) jsonObject.get(Message.CLASS_NAME_VARIABLE);
+		Class<?> clazz = Class.forName(className);
+		return (Message) gson.fromJson(json, clazz);
 	}
 }
