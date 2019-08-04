@@ -1,6 +1,7 @@
 package ru.otus;
 
 import ru.otus.application.service.SocketMessageWorker;
+import ru.otus.message.Message;
 import ru.otus.message.UserListRequest;
 
 import java.io.IOException;
@@ -29,6 +30,14 @@ public class FrontendMain {
 				socketMessageWorker.sendMessage(new UserListRequest(args[0]));
 				Thread.sleep(1000);
 				count++;
+			}
+
+			while (true) {
+				Message message = socketMessageWorker.pollMessage();
+				if(message != null) {
+					System.out.println("Received message from: " + message.getFrom());
+				}
+				Thread.sleep(1000);
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
