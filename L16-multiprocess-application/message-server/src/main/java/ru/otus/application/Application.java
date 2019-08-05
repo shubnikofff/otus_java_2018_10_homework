@@ -9,6 +9,8 @@ import ru.otus.message.Message;
 
 import java.io.IOException;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.*;
 import java.util.function.Consumer;
@@ -21,10 +23,10 @@ public class Application {
 	private static final int CLIENT_NUMBER = 4;
 	private static final int DELAY_BEFORE_CONNECT_TO_CLIENT_MS = 2000;
 
-	public static final String FIRST_FRONTEND_SERVER_ID = "FE#1";
-	public static final String SECOND_FRONTEND_SERVER_ID = "FE#2";
-	public static final String FIRST_DB_SERVER_ID = "DB#1";
-	public static final String SECOND_DB_SERVER_ID = "DB#2";
+	private static final String FIRST_FRONTEND_SERVER_ID = "FE#1";
+	private static final String SECOND_FRONTEND_SERVER_ID = "FE#2";
+	private static final String FIRST_DB_SERVER_ID = "DB#1";
+	private static final String SECOND_DB_SERVER_ID = "DB#2";
 
 	private static final String HOST = "localhost";
 	private static final int FIRST_FRONTEND_SERVER_PORT = 5051;
@@ -42,7 +44,7 @@ public class Application {
 	private final RoutingService routingService;
 //	private final Map<String, MessageWorker> workerMap = new ConcurrentHashMap<>(CLIENT_NUMBER);
 //	private final ExecutorService executorService = Executors.newFixedThreadPool(CLIENT_NUMBER);
-	private final ExecutorService executorService = Executors.newSingleThreadExecutor();
+	private final ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
 	private final Map<String, Client> clientMap = new ConcurrentHashMap<>(CLIENT_NUMBER);
 
 //	ThreadFactory threadFactory = new ThreadFactory() {
@@ -82,19 +84,20 @@ public class Application {
 		startClient(SECOND_DB_SERVER_ID, HOST, SECOND_DB_SERVER_PORT, SECOND_DB_SERVER_COMMAND);
 		startClient(FIRST_FRONTEND_SERVER_ID, HOST, FIRST_FRONTEND_SERVER_PORT, FIRST_FRONTEND_SERVER_COMMAND);
 		startClient(SECOND_FRONTEND_SERVER_ID, HOST, SECOND_FRONTEND_SERVER_PORT, SECOND_FRONTEND_SERVER_COMMAND);
-		executorService.execute(this::putMessagesToRoutingService);
+		routingService.start(this);
+		executorService.schedule(this::putMessagesToRoutingService, 0, TimeUnit.SECONDS);
 	}
 
 	private void startClient(String id, String host, int port, String command) {
 		final Client client = new Client(host, port, command);
-		clientMap.put(id, client);
 		client.start();
+		clientMap.put(id, client);
 	}
 
 	private void putMessagesToRoutingService() {
 		while (!executorService.isTerminated()) {
 			clientMap.forEach((id, client) -> {
-				final Message message = client.pullMessage();
+				Message message = client.pullMessage();
 				if (message != null) {
 					routingService.addMessage(message);
 				}
@@ -111,6 +114,9 @@ public class Application {
 		clientMap.get(addressee).pushMessage(message);
 	}
 
+	public List<String> getDbServerIdList() {
+		return List.of(FIRST_DB_SERVER_ID, SECOND_DB_SERVER_ID);
+	}
 
 
 //	public void start() {
