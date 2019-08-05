@@ -8,22 +8,32 @@ import ru.otus.message.UserListRequest;
 import java.util.Map;
 
 class DbMessageRouter extends Router {
-	private Balancer balancer = new Balancer();
 
-	DbMessageRouter(Map<String, MessageWorker> messageWorkerMap) {
-		super(messageWorkerMap);
-	}
+//	private Balancer balancer = new Balancer();
+
+//	DbMessageRouter(Map<String, MessageWorker> messageWorkerMap) {
+//		super(messageWorkerMap);
+//	}
+//
+//	@Override
+//	void sendMessage(Message message) {
+//		if (canSendMessage(message)) {
+//			messageWorkerMap.get(balancer.getAddressee()).sendMessage(message);
+//		} else {
+//			super.sendMessage(message);
+//		}
+//	}
+
 
 	@Override
-	void sendMessage(Message message) {
-		if (canSendMessage(message)) {
-			messageWorkerMap.get(balancer.getAddressee()).sendMessage(message);
-		} else {
-			super.sendMessage(message);
+	String getAddressee(Message message) {
+		if (canGetAddressee(message)) {
+
 		}
+		return super.getAddressee(message);
 	}
 
-	private boolean canSendMessage(Message message) {
+	private boolean canGetAddressee(Message message) {
 		return message instanceof SaveUserRequest || message instanceof UserListRequest;
 	}
 }
