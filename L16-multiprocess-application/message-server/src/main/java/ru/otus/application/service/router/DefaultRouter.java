@@ -6,6 +6,6 @@ class DefaultRouter extends Router {
 	@Override
 	String getAddressee(Message message) {
 		String addressee = message.getTo();
-		return addressee != null ? null : super.getAddressee(message);
+		return addressee != null ? addressee : super.getAddressee(message);
 	}
 }
