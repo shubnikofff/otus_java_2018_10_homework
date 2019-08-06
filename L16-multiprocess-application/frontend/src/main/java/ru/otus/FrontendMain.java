@@ -28,7 +28,7 @@ public class FrontendMain {
 			int count = 0;
 			while (count < 50) {
 				socketMessageWorker.sendMessage(new UserListRequest(args[0]));
-				Thread.sleep(1000);
+				Thread.sleep(500);
 				count++;
 			}
 
