@@ -1,8 +1,8 @@
 package ru.otus.application;
 
 import ru.otus.application.service.ProcessRunnerImplementation;
-import ru.otus.application.service.SocketMessageWorker;
-import ru.otus.domain.service.MessageWorker;
+import ru.otus.service.SocketMessageWorker;
+import ru.otus.service.MessageWorker;
 import ru.otus.domain.service.ProcessRunner;
 import ru.otus.message.Message;
 
@@ -22,13 +22,14 @@ class Client {
 	private final int port;
 	private final String command;
 	private final ExecutorService executorService = Executors.newSingleThreadExecutor();
-	private final ProcessRunner processRunner = new ProcessRunnerImplementation();
 	private MessageWorker messageWorker;
+	private ProcessRunner processRunner;
 
 	Client(String host, int port, String command) {
 		this.host = host;
 		this.port = port;
 		this.command = command;
+		processRunner = new ProcessRunnerImplementation();
 	}
 
 	void start() {
@@ -63,6 +64,9 @@ class Client {
 	}
 
 	Message pullMessage() {
+		if(messageWorker == null) {
+			return null;
+		}
 		return messageWorker.pollMessage();
 	}
 

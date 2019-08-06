@@ -2,7 +2,7 @@ package ru.otus.application;
 
 import ru.otus.application.service.DBService;
 import ru.otus.application.service.SocketListener;
-import ru.otus.domain.service.MessageWorker;
+import ru.otus.service.MessageWorker;
 import ru.otus.message.Message;
 
 import java.util.List;

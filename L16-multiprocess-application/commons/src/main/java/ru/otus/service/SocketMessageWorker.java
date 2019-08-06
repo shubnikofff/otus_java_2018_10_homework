@@ -1,10 +1,9 @@
-package ru.otus.application.service;
+package ru.otus.service;
 
 import com.google.gson.Gson;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-import ru.otus.domain.service.MessageWorker;
 import ru.otus.message.Message;
 
 import java.io.BufferedReader;

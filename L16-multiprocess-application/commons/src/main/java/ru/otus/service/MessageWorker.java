@@ -1,4 +1,4 @@
-package ru.otus.domain.service;
+package ru.otus.service;
 
 import ru.otus.message.Message;
 

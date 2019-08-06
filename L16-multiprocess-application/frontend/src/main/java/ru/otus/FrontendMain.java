@@ -1,6 +1,6 @@
 package ru.otus;
 
-import ru.otus.application.service.SocketMessageWorker;
+import ru.otus.service.SocketMessageWorker;
 import ru.otus.message.Message;
 import ru.otus.message.UserListRequest;
 
@@ -26,7 +26,7 @@ public class FrontendMain {
 			socketMessageWorker.start();
 
 			int count = 0;
-			while (count < 10) {
+			while (count < 50) {
 				socketMessageWorker.sendMessage(new UserListRequest(args[0]));
 				Thread.sleep(1000);
 				count++;

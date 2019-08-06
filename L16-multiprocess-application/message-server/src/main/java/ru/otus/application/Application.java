@@ -1,19 +1,12 @@
 package ru.otus.application;
 
 import org.springframework.stereotype.Service;
-import ru.otus.application.service.router.RoutingService;
-import ru.otus.application.service.SocketMessageWorker;
-import ru.otus.domain.service.MessageWorker;
-import ru.otus.domain.service.ProcessRunner;
+import ru.otus.application.service.RoutingService;
 import ru.otus.message.Message;
 
-import java.io.IOException;
-import java.net.Socket;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.*;
-import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -84,8 +77,28 @@ public class Application {
 		startClient(SECOND_DB_SERVER_ID, HOST, SECOND_DB_SERVER_PORT, SECOND_DB_SERVER_COMMAND);
 		startClient(FIRST_FRONTEND_SERVER_ID, HOST, FIRST_FRONTEND_SERVER_PORT, FIRST_FRONTEND_SERVER_COMMAND);
 		startClient(SECOND_FRONTEND_SERVER_ID, HOST, SECOND_FRONTEND_SERVER_PORT, SECOND_FRONTEND_SERVER_COMMAND);
+//		executorService.schedule(this::putMessagesToRoutingService, 2, TimeUnit.SECONDS);
+		try {
+			Thread.sleep(1000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+
 		routingService.start(this);
-		executorService.schedule(this::putMessagesToRoutingService, 0, TimeUnit.SECONDS);
+		while (true) {
+			clientMap.forEach((id, client) -> {
+				Message message = client.pullMessage();
+				if (message != null) {
+					routingService.addMessage(message);
+				}
+			});
+			try {
+				Thread.sleep(THREAD_SLEEP_TIME_MS);
+			} catch (InterruptedException e) {
+				LOGGER.log(Level.SEVERE, e.getMessage());
+			}
+		}
+
 	}
 
 	private void startClient(String id, String host, int port, String command) {

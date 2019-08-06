@@ -2,14 +2,14 @@ package ru.otus.application.service.router;
 
 import ru.otus.message.Message;
 
-abstract class Router {
+public abstract class Router {
 	private Router next;
 
-	void setNext(Router next) {
+	public void setNext(Router next) {
 		this.next = next;
 	}
 
-	String getAddressee(Message message) {
+	public String getAddressee(Message message) {
 		return next != null ? next.getAddressee(message) : null;
 	}
 }

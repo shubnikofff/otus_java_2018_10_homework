@@ -10,6 +10,7 @@
     <version>1.0-SNAPSHOT</version>
 
     <modules>
+        <module>commons</module>
         <module>message-server</module>
         <module>frontend</module>
         <module>db-server</module>

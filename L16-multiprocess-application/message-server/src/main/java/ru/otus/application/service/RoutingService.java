@@ -1,7 +1,10 @@
-package ru.otus.application.service.router;
+package ru.otus.application.service;
 
 import org.springframework.stereotype.Service;
 import ru.otus.application.Application;
+import ru.otus.application.service.router.DbRouter;
+import ru.otus.application.service.router.DefaultRouter;
+import ru.otus.application.service.router.Router;
 import ru.otus.message.Message;
 
 import java.util.concurrent.BlockingQueue;

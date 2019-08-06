@@ -1,6 +1,8 @@
 package ru.otus.application.service;
 
 import ru.otus.application.Application;
+import ru.otus.service.MessageWorker;
+import ru.otus.service.SocketMessageWorker;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -20,7 +22,7 @@ public class SocketListener {
 				while (!executorService.isTerminated()) {
 					Socket socket = serverSocket.accept();
 					logger.log(Level.SEVERE, application.getId() + " accepted socket on " + socket.getPort());
-					SocketMessageWorker socketMessageWorker = new SocketMessageWorker(socket);
+					MessageWorker socketMessageWorker = new SocketMessageWorker(socket);
 					application.addMessageWorker(socketMessageWorker);
 					socketMessageWorker.start();
 				}

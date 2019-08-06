@@ -6,16 +6,16 @@ import ru.otus.message.UserListRequest;
 
 import java.util.List;
 
-class DbRouter extends Router {
+public class DbRouter extends Router {
 	private final List<String> dbServerIdList;
 	private int lastIndex = 0;
 
-	DbRouter(List<String> dbServerIdList) {
+	public DbRouter(List<String> dbServerIdList) {
 		this.dbServerIdList = dbServerIdList;
 	}
 
 	@Override
-	String getAddressee(Message message) {
+	public String getAddressee(Message message) {
 		if (canGetAddressee(message)) {
 			final int index = lastIndex + 1 < dbServerIdList.size() ? lastIndex + 1 : 0;
 			lastIndex = index;
