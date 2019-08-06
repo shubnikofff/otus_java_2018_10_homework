@@ -7,20 +7,18 @@ import ru.otus.application.service.router.DefaultRouter;
 import ru.otus.application.service.router.Router;
 import ru.otus.message.Message;
 
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 @Service
 public class RoutingService {
-	private static final int THREAD_SLEEP_TIME_MS = 100;
+	private static final int INITIAL_DELAY_MS = 0;
+	private static final int PERIOD_MS = 100;
 	private static final Logger LOGGER = Logger.getLogger(RoutingService.class.getName());
 
 	private final BlockingQueue<Message> messages = new LinkedBlockingQueue<>();
-	private final ExecutorService executorService = Executors.newSingleThreadExecutor();
+	private final ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
 
 	public void addMessage(Message message) {
 		try {
@@ -34,20 +32,13 @@ public class RoutingService {
 		Router router = new DefaultRouter();
 		router.setNext(new DbRouter(application.getDbServerIdList()));
 
-		executorService.execute(() -> {
-			while (!executorService.isTerminated()) {
-				Message message = messages.poll();
-				if (message != null) {
-					final String addressee = router.getAddressee(message);
-					application.sendMessage(addressee, message);
-				}
-				try {
-					Thread.sleep(THREAD_SLEEP_TIME_MS);
-				} catch (InterruptedException e) {
-					LOGGER.log(Level.SEVERE, e.getMessage());
-				}
+		executorService.scheduleAtFixedRate(() -> {
+			Message message = messages.poll();
+			if (message != null) {
+				String addressee = router.getAddressee(message);
+				application.sendMessage(addressee, message);
 			}
-		});
+		}, INITIAL_DELAY_MS, PERIOD_MS, TimeUnit.MILLISECONDS);
 	}
 
 	public void stop() {

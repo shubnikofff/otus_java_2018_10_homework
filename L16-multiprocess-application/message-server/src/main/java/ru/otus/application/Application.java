@@ -7,13 +7,12 @@ import ru.otus.message.Message;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 @Service
 public class Application {
-	private static final int THREAD_SLEEP_TIME_MS = 100;
 	private static final int CLIENT_NUMBER = 4;
+	private static final int INITIAL_DELAY_MS = 0;
+	private static final int PERIOD_MS = 100;
 
 	private static final String FIRST_FRONTEND_SERVER_ID = "FE#1";
 	private static final String SECOND_FRONTEND_SERVER_ID = "FE#2";
@@ -31,9 +30,8 @@ public class Application {
 	private static final String FIRST_DB_SERVER_COMMAND = "java -jar ../db-server/target/db-server.jar " + FIRST_DB_SERVER_ID + " " + FIRST_DB_SERVER_PORT;
 	private static final String SECOND_DB_SERVER_COMMAND = "java -jar ../db-server/target/db-server.jar " + SECOND_DB_SERVER_ID + " " + SECOND_DB_SERVER_PORT;
 
-	private static final Logger LOGGER = Logger.getLogger(Application.class.getName());
 	private final RoutingService routingService;
-	private final ExecutorService executorService = Executors.newSingleThreadExecutor();
+	private final ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
 	private final Map<String, Client> clientMap = new ConcurrentHashMap<>(CLIENT_NUMBER);
 
 //	ThreadFactory threadFactory = new ThreadFactory() {
@@ -66,7 +64,7 @@ public class Application {
 		startClient(SECOND_FRONTEND_SERVER_ID, HOST, SECOND_FRONTEND_SERVER_PORT, SECOND_FRONTEND_SERVER_COMMAND);
 
 		routingService.start(this);
-		executorService.execute(this::putMessagesToRoutingService);
+		executorService.scheduleAtFixedRate(this::addMessageToRoutingService, INITIAL_DELAY_MS, PERIOD_MS, TimeUnit.MILLISECONDS);
 	}
 
 	private void startClient(String id, String host, int port, String command) {
@@ -75,20 +73,13 @@ public class Application {
 		clientMap.put(id, client);
 	}
 
-	private void putMessagesToRoutingService() {
-		while (!executorService.isTerminated()) {
-			clientMap.forEach((id, client) -> {
-				Message message = client.pullMessage();
-				if (message != null) {
-					routingService.addMessage(message);
-				}
-			});
-			try {
-				Thread.sleep(THREAD_SLEEP_TIME_MS);
-			} catch (InterruptedException e) {
-				LOGGER.log(Level.SEVERE, e.getMessage());
+	private void addMessageToRoutingService() {
+		clientMap.forEach((id, client) -> {
+			Message message = client.pullMessage();
+			if (message != null) {
+				routingService.addMessage(message);
 			}
-		}
+		});
 	}
 
 	public void sendMessage(String addressee, Message message) {
