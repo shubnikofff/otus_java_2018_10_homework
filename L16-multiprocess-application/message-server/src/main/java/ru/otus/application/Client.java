@@ -1,5 +1,6 @@
 package ru.otus.application;
 
+import ru.otus.service.LoggingThreadFactory;
 import ru.otus.application.service.ProcessRunner;
 import ru.otus.service.SocketMessageWorker;
 import ru.otus.service.MessageWorker;
@@ -17,17 +18,20 @@ class Client {
 	private final static Logger LOGGER = Logger.getLogger(Client.class.getName());
 	private final static int THREAD_SLEEP_TIME_MS = 2000;
 
+	private final String id;
 	private final String host;
 	private final int port;
 	private final String command;
-	private final ExecutorService executorService = Executors.newSingleThreadExecutor();
+	private final ExecutorService executorService;
 	private final ProcessRunner processRunner = new ProcessRunner();
 	private MessageWorker messageWorker;
 
-	Client(String host, int port, String command) {
+	Client(String id, String host, int port, String command) {
+		this.id = id;
 		this.host = host;
 		this.port = port;
 		this.command = command;
+		executorService = Executors.newSingleThreadExecutor(new LoggingThreadFactory(this.id));
 	}
 
 	void start() {
@@ -36,6 +40,7 @@ class Client {
 
 	void stop() {
 		executorService.shutdown();
+		messageWorker.stop();
 	}
 
 	private Process startProcess() {

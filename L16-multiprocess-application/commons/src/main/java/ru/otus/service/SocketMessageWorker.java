@@ -20,11 +20,11 @@ import java.util.logging.Logger;
 
 public class SocketMessageWorker implements MessageWorker {
 	private static final int THREADS_NUMBER = 2;
+	private static final Logger LOGGER = Logger.getLogger(SocketMessageWorker.class.getName());
 
 	private final BlockingQueue<Message> inputQueue = new LinkedBlockingQueue<>();
 	private final BlockingQueue<Message> outputQueue = new LinkedBlockingQueue<>();
-	private final ExecutorService executorService = Executors.newFixedThreadPool(THREADS_NUMBER);
-	private final Logger logger = Logger.getLogger(SocketMessageWorker.class.getName());
+	private final ExecutorService executorService = Executors.newFixedThreadPool(THREADS_NUMBER, new LoggingThreadFactory(SocketMessageWorker.class.getSimpleName()));
 	private final Socket socket;
 	private final Gson gson = new Gson();
 
@@ -47,11 +47,6 @@ public class SocketMessageWorker implements MessageWorker {
 	}
 
 	@Override
-	public Message takeMessage() throws InterruptedException {
-		return inputQueue.take();
-	}
-
-	@Override
 	public Message pollMessage() {
 		return inputQueue.poll();
 	}
@@ -69,7 +64,7 @@ public class SocketMessageWorker implements MessageWorker {
 				}
 			}
 		} catch (Exception e) {
-			logger.log(Level.SEVERE, e.getMessage());
+			LOGGER.log(Level.SEVERE, e.getMessage());
 		} finally {
 			executorService.shutdown();
 		}
@@ -83,7 +78,7 @@ public class SocketMessageWorker implements MessageWorker {
 				writer.println();
 			}
 		} catch (IOException | InterruptedException e) {
-			logger.log(Level.SEVERE, e.getMessage());
+			LOGGER.log(Level.SEVERE, e.getMessage());
 		}
 	}
 

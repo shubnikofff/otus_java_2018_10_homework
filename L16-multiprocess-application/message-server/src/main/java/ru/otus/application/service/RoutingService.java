@@ -6,6 +6,7 @@ import ru.otus.application.service.router.DbRouter;
 import ru.otus.application.service.router.DefaultRouter;
 import ru.otus.application.service.router.Router;
 import ru.otus.message.Message;
+import ru.otus.service.LoggingThreadFactory;
 
 import java.util.concurrent.*;
 import java.util.logging.Level;
@@ -18,7 +19,7 @@ public class RoutingService {
 	private static final Logger LOGGER = Logger.getLogger(RoutingService.class.getName());
 
 	private final BlockingQueue<Message> messages = new LinkedBlockingQueue<>();
-	private final ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
+	private final ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor(new LoggingThreadFactory(RoutingService.class.getSimpleName()));
 
 	public void addMessage(Message message) {
 		try {

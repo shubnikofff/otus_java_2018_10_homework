@@ -1,6 +1,7 @@
 package ru.otus.application;
 
 import org.springframework.stereotype.Service;
+import ru.otus.service.LoggingThreadFactory;
 import ru.otus.application.service.RoutingService;
 import ru.otus.message.Message;
 
@@ -31,27 +32,8 @@ public class Application {
 	private static final String SECOND_DB_SERVER_COMMAND = "java -jar ../db-server/target/db-server.jar " + SECOND_DB_SERVER_ID + " " + SECOND_DB_SERVER_PORT;
 
 	private final RoutingService routingService;
-	private final ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
+	private final ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor(new LoggingThreadFactory(Application.class.getSimpleName()));
 	private final Map<String, Client> clientMap = new ConcurrentHashMap<>(CLIENT_NUMBER);
-
-//	ThreadFactory threadFactory = new ThreadFactory() {
-//		Thread thread;
-//
-//		@Override
-//		public Thread newThread(Runnable r) {
-//			thread.setUncaughtExceptionHandler();
-//			return null;
-//		}
-//	};
-//
-//	ThreadFactory tf1 = (r) ->
-//		new Thread(r).setUncaughtExceptionHandler((t, e) -> {
-//				logger.log(Level.SEVERE, e.getMessage());
-//			final Thread t1 = t;
-//			return t1;
-//			}
-//		);
-
 
 	public Application(RoutingService routingService) {
 		this.routingService = routingService;
@@ -68,7 +50,7 @@ public class Application {
 	}
 
 	private void startClient(String id, String host, int port, String command) {
-		final Client client = new Client(host, port, command);
+		final Client client = new Client(id, host, port, command);
 		client.start();
 		clientMap.put(id, client);
 	}
