@@ -1,33 +1,28 @@
-package ru.otus;
+package ru.otus.service;
 
 import ru.otus.message.Message;
-import ru.otus.service.LoggingThreadFactory;
-import ru.otus.service.MessageWorker;
 
 import java.util.concurrent.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public abstract class AbstractMessageWorker implements MessageWorker {
+public abstract class AbstractMessageProcessor implements MessageWorker {
 	private static final int INITIAL_DELAY_MS = 0;
 	private static final int PERIOD_MS = 100;
-	private static final Logger LOGGER = Logger.getLogger(AbstractMessageWorker.class.getName());
+	private static final Logger LOGGER = Logger.getLogger(AbstractMessageProcessor.class.getName());
 
 	private BlockingQueue<Message> inputQueue = new LinkedBlockingQueue<>();
 	private BlockingQueue<Message> outputQueue = new LinkedBlockingQueue<>();
 	private ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor(new LoggingThreadFactory(this.getClass().getName()));
 
 	public void start() {
-		this.init();
 		executorService.scheduleAtFixedRate(() -> {
-			Message message = null;
 			try {
-				message = inputQueue.take();
-				processMessage(message);
+				Message result = processMessage(inputQueue.take());
+				outputQueue.put(result);
 			} catch (InterruptedException e) {
 				LOGGER.log(Level.SEVERE, e.getMessage());
 			}
-			processMessage(message);
 		}, INITIAL_DELAY_MS, PERIOD_MS, TimeUnit.MILLISECONDS);
 	}
 
@@ -39,6 +34,9 @@ public abstract class AbstractMessageWorker implements MessageWorker {
 		return outputQueue.take();
 	}
 
-	public abstract void init();
-	public abstract void processMessage(Message message);
+	public void stop() {
+		executorService.shutdown();
+	}
+
+	protected abstract Message processMessage(Message message);
 }

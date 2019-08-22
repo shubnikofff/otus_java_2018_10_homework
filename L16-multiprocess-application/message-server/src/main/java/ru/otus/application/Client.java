@@ -2,9 +2,9 @@ package ru.otus.application;
 
 import ru.otus.service.LoggingThreadFactory;
 import ru.otus.application.service.ProcessRunner;
-import ru.otus.service.SocketMessageWorker;
 import ru.otus.service.MessageWorker;
 import ru.otus.message.Message;
+import ru.otus.service.SocketWorker;
 
 import java.io.IOException;
 import java.net.Socket;
@@ -59,7 +59,7 @@ class Client {
 			if (!process.isAlive()) {
 				throw new Exception("Process " + process.pid() + " is dead");
 			}
-			messageWorker = new SocketMessageWorker(new Socket(host, port));
+			messageWorker = new SocketWorker(new Socket(host, port));
 			messageWorker.start();
 		} catch (Exception e) {
 			LOGGER.log(Level.SEVERE, e.getMessage());
@@ -70,10 +70,22 @@ class Client {
 		if(messageWorker == null) {
 			return null;
 		}
-		return messageWorker.pollMessage();
+
+		Message message = null;
+		try {
+			message = messageWorker.getMessage();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+
+		return message;
 	}
 
 	void pushMessage(Message message) {
-		messageWorker.sendMessage(message);
+		try {
+			messageWorker.putMessage(message);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 	}
 }
