@@ -22,7 +22,7 @@ public class Application {
 		executorService =  Executors.newSingleThreadScheduledExecutor(new LoggingThreadFactory(id));
 	}
 
-	public void start(int port) {
+	public void start(String id, int port) {
 		messageSystemClient.start(port);
 	}
 

@@ -43,16 +43,16 @@ class SocketMessageSystemClient implements MessageSystemClient {
 	}
 
 	private MessageWorker startMessageWorker(Socket socket) {
-		MessageWorker messageWorker = new SocketMessageWorker(socket);
+		MessageWorker messageWorker = new SocketWorker(socket);
 		messageWorker.start();
 		return messageWorker;
 	}
 
 	public void sendMessage(Message message) throws ExecutionException, InterruptedException {
-		messageWorkerCompletableFuture.get().sendMessage(message);
+		messageWorkerCompletableFuture.get().putMessage(message);
 	}
 
 	public Message getMessage() throws ExecutionException, InterruptedException {
-		return messageWorkerCompletableFuture.get().pollMessage();
+		return messageWorkerCompletableFuture.get().getMessage();
 	}
 }

@@ -18,38 +18,48 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class SocketMessageWorker implements MessageWorker {
+public class SocketWorker implements MessageWorker {
 	private static final int THREADS_NUMBER = 2;
-	private static final Logger LOGGER = Logger.getLogger(SocketMessageWorker.class.getName());
+	private static final Logger LOGGER = Logger.getLogger(SocketWorker.class.getName());
 
 	private final BlockingQueue<Message> inputQueue = new LinkedBlockingQueue<>();
 	private final BlockingQueue<Message> outputQueue = new LinkedBlockingQueue<>();
-	private final ExecutorService executorService = Executors.newFixedThreadPool(THREADS_NUMBER, new LoggingThreadFactory(SocketMessageWorker.class.getSimpleName()));
+	private final ExecutorService executorService = Executors.newFixedThreadPool(THREADS_NUMBER, new LoggingThreadFactory(SocketWorker.class.getSimpleName()));
 	private final Socket socket;
 	private final Gson gson = new Gson();
 
-	public SocketMessageWorker(Socket socket) {
+	public SocketWorker(Socket socket) {
 		this.socket = socket;
 	}
 
+	@Override
 	public void start() {
 		executorService.execute(this::readFromSocket);
 		executorService.execute(this::writeToSocket);
 	}
 
+	@Override
 	public void stop() {
 		executorService.shutdown();
 	}
 
 	@Override
-	public void sendMessage(Message message) {
-		outputQueue.add(message);
+	public void putMessage(Message message) throws InterruptedException {
+		outputQueue.put(message);
 	}
 
 	@Override
-	public Message pollMessage() {
-		return inputQueue.poll();
+	public Message getMessage() throws InterruptedException {
+		return inputQueue.take();
 	}
+
+//	public void sendMessage(Message message) {
+//		outputQueue.add(message);
+//	}
+//
+//	public Message pollMessage() {
+//		return inputQueue.poll();
+//	}
 
 	private void readFromSocket() {
 		try (BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
@@ -63,7 +73,7 @@ public class SocketMessageWorker implements MessageWorker {
 					stringBuilder = new StringBuilder();
 				}
 			}
-		} catch (Exception e) {
+		} catch (ParseException | ClassNotFoundException | IOException e) {
 			LOGGER.log(Level.SEVERE, e.getMessage());
 		} finally {
 			executorService.shutdown();
@@ -73,12 +83,14 @@ public class SocketMessageWorker implements MessageWorker {
 	private void writeToSocket() {
 		try (PrintWriter writer = new PrintWriter(socket.getOutputStream(), true)) {
 			while (socket.isConnected()) {
-				final String json = gson.toJson(outputQueue.take());
+				String json = gson.toJson(outputQueue.take());
 				writer.println(json);
 				writer.println();
 			}
 		} catch (IOException | InterruptedException e) {
 			LOGGER.log(Level.SEVERE, e.getMessage());
+		} finally {
+			executorService.shutdown();
 		}
 	}
 

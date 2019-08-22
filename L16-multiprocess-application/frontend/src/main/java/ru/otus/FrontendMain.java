@@ -1,8 +1,9 @@
 package ru.otus;
 
-import ru.otus.service.SocketMessageWorker;
 import ru.otus.message.Message;
 import ru.otus.message.UserListRequest;
+import ru.otus.service.MessageWorker;
+import ru.otus.service.SocketWorker;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -22,18 +23,18 @@ public class FrontendMain {
 				logger.log(Level.SEVERE, "Accepted connection on " + socket.getPort());
 			}
 
-			final SocketMessageWorker socketMessageWorker = new SocketMessageWorker(socket);
+			final MessageWorker socketMessageWorker = new SocketWorker(socket);
 			socketMessageWorker.start();
 
 			int count = 0;
 			while (count < 50) {
-				socketMessageWorker.sendMessage(new UserListRequest(args[0]));
+				socketMessageWorker.putMessage(new UserListRequest(args[0]));
 				Thread.sleep(500);
 				count++;
 			}
 
 			while (true) {
-				Message message = socketMessageWorker.pollMessage();
+				Message message = socketMessageWorker.getMessage();
 				if(message != null) {
 					System.out.println("Received message from: " + message.getFrom());
 				}
