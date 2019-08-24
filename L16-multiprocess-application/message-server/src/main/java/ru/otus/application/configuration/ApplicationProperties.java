@@ -11,6 +11,8 @@ import java.util.List;
 public class ApplicationProperties {
 	private List<Client> clients = new ArrayList<>();
 	private List<String> dbServerIds = new ArrayList<>();
+	private String logDirectory;
+	private String commandLineSeparator;
 
 	public List<Client> getClients() {
 		return clients;
@@ -18,6 +20,22 @@ public class ApplicationProperties {
 
 	public List<String> getDbServerIds() {
 		return dbServerIds;
+	}
+
+	public String getLogDirectory() {
+		return logDirectory;
+	}
+
+	public void setLogDirectory(String logDirectory) {
+		this.logDirectory = logDirectory;
+	}
+
+	public String getCommandLineSeparator() {
+		return commandLineSeparator;
+	}
+
+	public void setCommandLineSeparator(String commandLineSeparator) {
+		this.commandLineSeparator = commandLineSeparator;
 	}
 
 	public static class Client {

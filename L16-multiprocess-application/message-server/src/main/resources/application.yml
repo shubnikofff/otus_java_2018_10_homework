@@ -1,4 +1,5 @@
 application:
+
   clients:
     - id: "DB#1"
       port: 5051
@@ -12,6 +13,10 @@ application:
     - id: "FE#2"
       port: 5054
       run_command: "java -jar ../frontend/target/frontend.jar ${application.clients[3].id} ${application.clients[3].port}"
+
   db_server_ids:
     - ${application.clients[0].id}
     - ${application.clients[1].id}
+
+  log_directory: "../logs"
+  command_line_separator: " "
