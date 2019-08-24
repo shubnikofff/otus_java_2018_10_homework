@@ -18,9 +18,9 @@ public class DbRouter extends Router {
 	@Override
 	public String getAddressee(Message message) {
 		if (canGetAddressee(message)) {
-			final int index = lastIndex + 1 < applicationProperties.getDbServerIdList().size() ? lastIndex + 1 : 0;
+			final int index = lastIndex + 1 < applicationProperties.getDbServerIds().size() ? lastIndex + 1 : 0;
 			lastIndex = index;
-			return applicationProperties.getDbServerIdList().get(index);
+			return applicationProperties.getDbServerIds().get(index);
 		}
 		return super.getAddressee(message);
 	}

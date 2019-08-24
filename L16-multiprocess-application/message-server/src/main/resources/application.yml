@@ -1,17 +1,17 @@
 application:
-  servers:
+  clients:
     - id: "DB#1"
       port: 5051
-      command: "java -jar ../frontend/target/frontend.jar ${application.servers[0].id} ${application.servers[0].port}"
+      run_command: "java -jar ../frontend/target/frontend.jar ${application.clients[0].id} ${application.clients[0].port}"
     - id: "DB#2"
       port: 5052
-      command: "java -jar ../frontend/target/frontend.jar ${application.servers[1].id} ${application.servers[1].port}"
+      run_command: "java -jar ../frontend/target/frontend.jar ${application.clients[1].id} ${application.clients[1].port}"
     - id: "FE#1"
       port: 5053
-      command: "java -jar ../frontend/target/frontend.jar ${application.servers[2].id} ${application.servers[2].port}"
+      run_command: "java -jar ../frontend/target/frontend.jar ${application.clients[2].id} ${application.clients[2].port}"
     - id: "FE#2"
       port: 5054
-      command: "java -jar ../frontend/target/frontend.jar ${application.servers[3].id} ${application.servers[3].port}"
-  db-server-id-list:
-    - ${application.servers[0].id}
-    - ${application.servers[1].id}
+      run_command: "java -jar ../frontend/target/frontend.jar ${application.clients[3].id} ${application.clients[3].port}"
+  db_server_ids:
+    - ${application.clients[0].id}
+    - ${application.clients[1].id}

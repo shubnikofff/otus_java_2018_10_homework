@@ -53,14 +53,6 @@ public class SocketWorker implements MessageWorker {
 		return inputQueue.take();
 	}
 
-//	public void sendMessage(Message message) {
-//		outputQueue.add(message);
-//	}
-//
-//	public Message pollMessage() {
-//		return inputQueue.poll();
-//	}
-
 	private void readFromSocket() {
 		try (BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
 			String line;

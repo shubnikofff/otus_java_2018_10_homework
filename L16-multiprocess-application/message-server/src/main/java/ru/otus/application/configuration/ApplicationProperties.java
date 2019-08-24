@@ -9,21 +9,21 @@ import java.util.List;
 @Component
 @ConfigurationProperties("application")
 public class ApplicationProperties {
-	private List<Server> servers = new ArrayList<>();
-	private List<String> dbServerIdList = new ArrayList<>();
+	private List<Client> clients = new ArrayList<>();
+	private List<String> dbServerIds = new ArrayList<>();
 
-	public List<Server> getServers() {
-		return servers;
+	public List<Client> getClients() {
+		return clients;
 	}
 
-	public List<String> getDbServerIdList() {
-		return dbServerIdList;
+	public List<String> getDbServerIds() {
+		return dbServerIds;
 	}
 
-	public static class Server {
+	public static class Client {
 		private String id;
 		private int port;
-		private String command;
+		private String runCommand;
 
 		public String getId() {
 			return id;
@@ -41,12 +41,12 @@ public class ApplicationProperties {
 			this.port = port;
 		}
 
-		public String getCommand() {
-			return command;
+		public String getRunCommand() {
+			return runCommand;
 		}
 
-		public void setCommand(String command) {
-			this.command = command;
+		public void setRunCommand(String runCommand) {
+			this.runCommand = runCommand;
 		}
 	}
 }
