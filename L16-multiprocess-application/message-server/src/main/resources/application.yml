@@ -12,6 +12,6 @@ application:
     - id: "FE#2"
       port: 5054
       command: "java -jar ../frontend/target/frontend.jar ${application.servers[3].id} ${application.servers[3].port}"
-  db-server-ids:
+  db-server-id-list:
     - ${application.servers[0].id}
     - ${application.servers[1].id}

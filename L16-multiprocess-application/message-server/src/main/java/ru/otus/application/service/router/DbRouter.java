@@ -1,25 +1,26 @@
 package ru.otus.application.service.router;
 
+import org.springframework.stereotype.Service;
+import ru.otus.application.configuration.ApplicationProperties;
 import ru.otus.message.Message;
 import ru.otus.message.SaveUserRequest;
 import ru.otus.message.UserListRequest;
 
-import java.util.List;
-
+@Service
 public class DbRouter extends Router {
-	private final List<String> dbServerIdList;
+	private final ApplicationProperties applicationProperties;
 	private int lastIndex = 0;
 
-	public DbRouter(List<String> dbServerIdList) {
-		this.dbServerIdList = dbServerIdList;
+	public DbRouter(ApplicationProperties applicationProperties) {
+		this.applicationProperties = applicationProperties;
 	}
 
 	@Override
 	public String getAddressee(Message message) {
 		if (canGetAddressee(message)) {
-			final int index = lastIndex + 1 < dbServerIdList.size() ? lastIndex + 1 : 0;
+			final int index = lastIndex + 1 < applicationProperties.getDbServerIdList().size() ? lastIndex + 1 : 0;
 			lastIndex = index;
-			return dbServerIdList.get(index);
+			return applicationProperties.getDbServerIdList().get(index);
 		}
 		return super.getAddressee(message);
 	}

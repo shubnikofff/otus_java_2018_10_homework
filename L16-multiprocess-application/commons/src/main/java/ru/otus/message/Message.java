@@ -4,7 +4,7 @@ public abstract class Message {
 	public static final String CLASS_NAME_VARIABLE = "className";
 
 	private final String from;
-	private final String to;
+	private String to;
 	private final String className;
 
 	public Message(String from, String to, Class<?> clazz) {
@@ -19,5 +19,9 @@ public abstract class Message {
 
 	public String getTo() {
 		return to;
+	}
+
+	public void setTo(String to) {
+		this.to = to;
 	}
 }

@@ -10,14 +10,14 @@ import java.util.List;
 @ConfigurationProperties("application")
 public class ApplicationProperties {
 	private List<Server> servers = new ArrayList<>();
-	private List<String> dbServerIds = new ArrayList<>();
+	private List<String> dbServerIdList = new ArrayList<>();
 
 	public List<Server> getServers() {
 		return servers;
 	}
 
-	public List<String> getDbServerIds() {
-		return dbServerIds;
+	public List<String> getDbServerIdList() {
+		return dbServerIdList;
 	}
 
 	public static class Server {
