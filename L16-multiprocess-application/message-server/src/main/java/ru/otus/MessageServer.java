@@ -1,14 +1,14 @@
 package ru.otus;
 
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.springframework.context.annotation.ComponentScan;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.ConfigurableApplicationContext;
 import ru.otus.application.Application;
 
-@ComponentScan
+@SpringBootApplication
 public class MessageServer {
 	public static void main(String[] args) {
-		final AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(MessageServer.class);
-		final Application application = context.getBean(Application.class);
-		application.start();
+		ConfigurableApplicationContext context = SpringApplication.run(MessageServer.class, args);
+		context.getBean(Application.class).start();
 	}
 }
