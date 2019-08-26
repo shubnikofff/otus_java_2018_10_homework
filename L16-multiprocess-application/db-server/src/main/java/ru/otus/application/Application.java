@@ -1,91 +1,86 @@
 package ru.otus.application;
 
+import org.slf4j.Logger;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 import ru.otus.application.service.DBService;
-import ru.otus.service.LoggingThreadFactory;
-import ru.otus.service.MessageSystemClient;
+import ru.otus.message.Message;
+import ru.otus.service.MessageWorker;
+import ru.otus.service.SocketWorker;
 
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
+import java.io.IOException;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.util.concurrent.*;
 
+@Service
 public class Application {
-	private static final int THREAD_SLEEP_TIME_MS = 100;
+	private static final int INITIAL_DELAY_MS = 0;
+	private static final int PERIOD_MS = 100;
+	private static final int SERVER_SOCKET_BACKLOG = 1;
 
-	private String id;
-	private DBService dbService;
-	private MessageSystemClient messageSystemClient;
-	private ScheduledExecutorService executorService;
+	private final DBService dbService;
+	private final ExecutorService executorService;
+	private final int port;
+	private final Logger logger;
+	private MessageWorker messageWorker;
+	private final ScheduledExecutorService scheduledExecutorService;
 
-	public Application(String id, DBService dbService, MessageSystemClient messageSystemClient) {
-		this.id = id;
+	public Application(
+			DBService dbService,
+			@Value("${port}") int port,
+			@Qualifier("loggerApplication") Logger logger
+	) {
 		this.dbService = dbService;
-		this.messageSystemClient = messageSystemClient;
-		executorService =  Executors.newSingleThreadScheduledExecutor(new LoggingThreadFactory(id));
+		this.logger = logger;
+		this.port = port;
+		executorService = Executors.newSingleThreadExecutor();
+		scheduledExecutorService = Executors.newScheduledThreadPool(2);
 	}
 
-	public void start(String id, int port) {
-		messageSystemClient.start(port);
+	public void start() {
+		dbService.start();
+
+		CompletableFuture.supplyAsync(() -> {
+			try {
+				final Socket socket = new ServerSocket(port, SERVER_SOCKET_BACKLOG).accept();
+				logger.info("Accepted connection on port " + socket.getPort());
+				return socket;
+			} catch (IOException e) {
+				logger.error(e.getMessage());
+				throw new CompletionException(e);
+			}
+		}, executorService)
+				.thenAccept(this::createAndStartMessageWorker)
+				.thenRun(this::processInnerMessages);
+
+		scheduledExecutorService.scheduleAtFixedRate(this::sendOutgoingMessage, INITIAL_DELAY_MS, PERIOD_MS, TimeUnit.MILLISECONDS);
 	}
 
-	private void putMessageInDbService() {
-
+	private void createAndStartMessageWorker(Socket socket) {
+		messageWorker = new SocketWorker(socket);
+		messageWorker.start();
 	}
 
+	private void processInnerMessages() {
+		scheduledExecutorService.scheduleAtFixedRate(() -> {
+			try {
+				final Message message = messageWorker.getMessage();
+				dbService.putMessage(message);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}, INITIAL_DELAY_MS, PERIOD_MS, TimeUnit.MILLISECONDS);
+	}
 
+	private void sendOutgoingMessage() {
+		try {
+			final Message message = dbService.getMessage();
+			messageWorker.putMessage(message);
+		} catch (InterruptedException e) {
+			logger.error(e.getMessage());
+		}
 
-
-
-
-
-
-
-
-	//	private final String id;
-//	private final int port;
-//	private final List<MessageWorker> messageWorkers = new CopyOnWriteArrayList<>();
-//	private final SocketListener socketListener = new SocketListener();
-//	private final ExecutorService executorService = Executors.newSingleThreadExecutor();
-//
-//	public Application(String id, int port) {
-//		this.id = id;
-//		this.port = port;
-//	}
-//
-//	public String getId() {
-//		return id;
-//	}
-//
-//	public int getPort() {
-//		return port;
-//	}
-//
-//	public void start() {
-//		socketListener.start(this);
-//		executorService.execute(this::processMessages);
-//	}
-//
-//	public void stop() {
-//		socketListener.stop();
-//		executorService.shutdown();
-//	}
-//
-//	public void addMessageWorker(MessageWorker messageWorker) {
-//		messageWorkers.add(messageWorker);
-//	}
-//
-//	private void processMessages() {
-//		final DBService dbService = new DBService(this);
-//		while (!executorService.isTerminated()) {
-//			for (MessageWorker worker : messageWorkers) {
-//				Message message = worker.pollMessage();
-//				if (message != null) {
-//					dbService.processMessage(message, worker);
-//				}
-//				try {
-//					Thread.sleep(THREAD_SLEEP_TIME_MS);
-//				} catch (InterruptedException e) {
-//					e.printStackTrace();
-//				}
-//			}
-//		}
-//	}
+	}
 }
