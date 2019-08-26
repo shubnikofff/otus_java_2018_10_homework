@@ -1,16 +1,18 @@
 package ru.otus.application.service;
 
-import ru.otus.application.Application;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+import ru.otus.message.Message;
+import ru.otus.message.UserListResponse;
+import ru.otus.service.AbstractMessageProcessor;
 
-public class DBService {
-	private Application application;
+@Service
+public class DBService extends AbstractMessageProcessor {
+	@Value("${id}")
+	private String id;
 
-	public DBService(Application application) {
-		this.application = application;
+	@Override
+	protected Message processMessage(Message message) {
+		return new UserListResponse(id, message.getFrom());
 	}
-
-//	public void processMessage(Message message, MessageWorker messageWorker) {
-//		System.out.println("Process message from " + message.getFrom());
-//		messageWorker.sendMessage(new UserListResponse(application.getId(), message.getFrom()));
-//	}
 }
