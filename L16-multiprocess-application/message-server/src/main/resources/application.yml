@@ -3,10 +3,10 @@ application:
   clients:
     - id: "DB#1"
       port: 5051
-      run_command: "java -jar ../db-server/target/db-server.jar ${application.clients[0].id} ${application.clients[0].port}"
+      run_command: "java -jar ../db-server/target/db-server.jar --id=${application.clients[0].id} --port=${application.clients[0].port}"
     - id: "DB#2"
       port: 5052
-      run_command: "java -jar ../db-server/target/db-server.jar ${application.clients[1].id} ${application.clients[1].port}"
+      run_command: "java -jar ../db-server/target/db-server.jar --id=${application.clients[1].id} --port=${application.clients[1].port}"
     - id: "FE#1"
       port: 5053
       run_command: "java -jar ../frontend/target/frontend.jar ${application.clients[2].id} ${application.clients[2].port}"
