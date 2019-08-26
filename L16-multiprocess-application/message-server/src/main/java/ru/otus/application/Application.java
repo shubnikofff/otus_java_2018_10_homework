@@ -19,7 +19,7 @@ import java.util.concurrent.*;
 public class Application {
 	private static final int INITIAL_DELAY_MS = 0;
 	private static final int PERIOD_MS = 100;
-	private static final int SLEEP_TIME_BEFORE_START_MESSAGE_WORKER_MS = 2000;
+	private static final int SLEEP_TIME_BEFORE_START_MESSAGE_WORKER_MS = 3000;
 	private static final String HOST = "localhost";
 
 	private final ApplicationProperties applicationProperties;
@@ -61,10 +61,10 @@ public class Application {
 			}
 		}, executorService).thenApply((process) -> {
 			try {
-				Thread.sleep(SLEEP_TIME_BEFORE_START_MESSAGE_WORKER_MS);
 				if (!process.isAlive()) {
 					throw new Exception(client.getId() + " is dead");
 				}
+				Thread.sleep(SLEEP_TIME_BEFORE_START_MESSAGE_WORKER_MS); //TODO attempt to reconnect instead of sleeping
 				Socket socket = new Socket(HOST, client.getPort());
 				if (!socket.isConnected()) {
 					throw new Exception("Can't connect to " + client.getId());
