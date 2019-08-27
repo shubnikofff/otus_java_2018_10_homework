@@ -24,7 +24,7 @@ public class SocketWorker implements MessageWorker {
 
 	private final BlockingQueue<Message> inputQueue = new LinkedBlockingQueue<>();
 	private final BlockingQueue<Message> outputQueue = new LinkedBlockingQueue<>();
-	private final ExecutorService executorService = Executors.newFixedThreadPool(THREADS_NUMBER, new LoggingThreadFactory(SocketWorker.class.getSimpleName()));
+	private final ExecutorService executorService = Executors.newFixedThreadPool(THREADS_NUMBER);
 	private final Socket socket;
 	private final Gson gson = new Gson();
 
