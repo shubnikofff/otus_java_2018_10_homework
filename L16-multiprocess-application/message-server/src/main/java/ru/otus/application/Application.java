@@ -7,10 +7,12 @@ import ru.otus.application.configuration.ApplicationProperties;
 import ru.otus.application.service.ProcessStarter;
 import ru.otus.application.service.RoutingService;
 import ru.otus.message.Message;
+import ru.otus.message.ServiceUnavailable;
 import ru.otus.service.MessageWorker;
 import ru.otus.service.SocketWorker;
 
 import java.io.IOException;
+import java.net.ConnectException;
 import java.net.Socket;
 import java.util.Map;
 import java.util.concurrent.*;
@@ -19,8 +21,8 @@ import java.util.concurrent.*;
 public class Application {
 	private static final int INITIAL_DELAY_MS = 0;
 	private static final int PERIOD_MS = 100;
-	private static final int SLEEP_TIME_BEFORE_START_MESSAGE_WORKER_MS = 3000;
 	private static final String HOST = "localhost";
+	private static final String ID = "MS";
 
 	private final ApplicationProperties applicationProperties;
 	private final Logger logger;
@@ -47,8 +49,8 @@ public class Application {
 
 	public void start() {
 		routingService.start();
-		scheduledExecutorService.scheduleAtFixedRate(this::sendMessage, INITIAL_DELAY_MS, PERIOD_MS, TimeUnit.MILLISECONDS);
 		applicationProperties.getClients().forEach(this::startClient);
+		scheduledExecutorService.scheduleAtFixedRate(this::sendOutgoingMessage, INITIAL_DELAY_MS, PERIOD_MS, TimeUnit.MILLISECONDS);
 	}
 
 	private void startClient(ApplicationProperties.Client client) {
@@ -64,12 +66,16 @@ public class Application {
 				if (!process.isAlive()) {
 					throw new Exception(client.getId() + " is dead");
 				}
-				Thread.sleep(SLEEP_TIME_BEFORE_START_MESSAGE_WORKER_MS); //TODO attempt to reconnect instead of sleeping
-				Socket socket = new Socket(HOST, client.getPort());
-				if (!socket.isConnected()) {
-					throw new Exception("Can't connect to " + client.getId());
+				Socket socket = null;
+				while (socket == null) {
+					try {
+						Thread.sleep(applicationProperties.getSleepTimeBeforeConnectToClient());
+						socket = new Socket(HOST, client.getPort());
+					} catch (ConnectException e) {
+						logger.warn(client.getId() + " " + e.getMessage() + " try to reconnect");
+					}
 				}
-				logger.info("Connected to " + client.getId() + " on port " + socket.getLocalPort());
+				logger.info(client.getId() + " connected on port " + socket.getLocalPort());
 				return socket;
 			} catch (Exception e) {
 				logger.error(e.getMessage());
@@ -89,10 +95,15 @@ public class Application {
 		}));
 	}
 
-	private void sendMessage() {
+	private void sendOutgoingMessage() {
 		try {
 			final Message message = routingService.getMessage();
-			messageWorkerMap.get(message.getTo()).putMessage(message);
+			final MessageWorker messageWorker = messageWorkerMap.get(message.getTo());
+			if (messageWorker == null) {
+				messageWorkerMap.get(message.getFrom()).putMessage(new ServiceUnavailable(ID, message.getFrom()));
+			} else {
+				messageWorker.putMessage(message);
+			}
 		} catch (InterruptedException e) {
 			logger.error(e.getMessage());
 		}

@@ -13,6 +13,7 @@ public class ApplicationProperties {
 	private List<String> dbServerIds = new ArrayList<>();
 	private String logDirectory;
 	private String commandLineSeparator;
+	private int sleepTimeBeforeConnectToClient;
 
 	public List<Client> getClients() {
 		return clients;
@@ -36,6 +37,14 @@ public class ApplicationProperties {
 
 	public void setCommandLineSeparator(String commandLineSeparator) {
 		this.commandLineSeparator = commandLineSeparator;
+	}
+
+	public int getSleepTimeBeforeConnectToClient() {
+		return sleepTimeBeforeConnectToClient;
+	}
+
+	public void setSleepTimeBeforeConnectToClient(int sleepTimeBeforeConnectToClient) {
+		this.sleepTimeBeforeConnectToClient = sleepTimeBeforeConnectToClient;
 	}
 
 	public static class Client {
