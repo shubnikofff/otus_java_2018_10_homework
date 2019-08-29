@@ -1,0 +1,19 @@
+body {
+    padding: 1rem;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    border-style: hidden;
+}
+
+th, td, tr {
+    text-align: left;
+    padding: 1rem 0;
+    border-bottom: 1px solid gray;
+}
+
+.link-container {
+    padding-bottom: 1rem;
+}
