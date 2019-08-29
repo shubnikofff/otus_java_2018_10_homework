@@ -1,14 +1,8 @@
 package ru.otus;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.web.servlet.ServletComponentScan;
-
-@ServletComponentScan
-@SpringBootApplication
 public class FrontendServer {
 	public static void main(String[] args) {
-		SpringApplication.run(FrontendServer.class, args);
+//		SpringApplication.run(FrontendServer.class, args);
 	}
 //	public static void main(String[] args) throws InterruptedException {
 //		final Logger logger = Logger.getLogger(args[0]);
