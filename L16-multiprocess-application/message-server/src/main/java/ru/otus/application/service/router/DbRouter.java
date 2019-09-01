@@ -3,6 +3,7 @@ package ru.otus.application.service.router;
 import org.springframework.stereotype.Service;
 import ru.otus.application.configuration.ApplicationProperties;
 import ru.otus.message.Message;
+import ru.otus.message.PingRequest;
 import ru.otus.message.SaveUserRequest;
 import ru.otus.message.UserListRequest;
 
@@ -26,6 +27,6 @@ public class DbRouter extends Router {
 	}
 
 	private boolean canGetAddressee(Message message) {
-		return message instanceof SaveUserRequest || message instanceof UserListRequest;
+		return message instanceof SaveUserRequest || message instanceof UserListRequest || message instanceof PingRequest;
 	}
 }

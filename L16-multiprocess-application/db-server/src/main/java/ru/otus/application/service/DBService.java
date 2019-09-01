@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import ru.otus.message.Message;
-import ru.otus.message.UserListResponse;
+import ru.otus.message.PingResponse;
 import ru.otus.service.AbstractMessageProcessor;
 
 @Service
@@ -20,7 +20,7 @@ public class DBService extends AbstractMessageProcessor {
 
 	@Override
 	protected Message processMessage(Message message) {
-		logger.info("Received a message from " + message.getFrom());
-		return new UserListResponse(message.getId(), id, message.getFrom());
+		logger.info("Received message from " + message.getFrom());
+		return new PingResponse(message.getId(), id, message.getFrom(), "Hello from " + id);
 	}
 }
