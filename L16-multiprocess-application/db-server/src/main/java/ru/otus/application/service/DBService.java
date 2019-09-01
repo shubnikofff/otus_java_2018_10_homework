@@ -21,6 +21,6 @@ public class DBService extends AbstractMessageProcessor {
 	@Override
 	protected Message processMessage(Message message) {
 		logger.info("Received a message from " + message.getFrom());
-		return new UserListResponse(id, message.getFrom());
+		return new UserListResponse(message.getId(), id, message.getFrom());
 	}
 }
