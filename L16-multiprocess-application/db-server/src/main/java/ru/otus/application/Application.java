@@ -69,7 +69,7 @@ public class Application {
 				final Message message = messageWorker.getMessage();
 				dbService.putMessage(message);
 			} catch (InterruptedException e) {
-				e.printStackTrace();
+				logger.error(e.getMessage());
 			}
 		}, INITIAL_DELAY_MS, PERIOD_MS, TimeUnit.MILLISECONDS);
 	}
