@@ -22,7 +22,7 @@ application:
 
   log_directory: "../logs"
   command_line_separator: " "
-  sleep_time_before_connect_to_client: 1000 #ms
+  sleep_time_before_connect_to_client: 1500 #ms
 
 spring:
   output:
