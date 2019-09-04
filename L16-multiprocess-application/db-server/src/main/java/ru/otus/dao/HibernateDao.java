@@ -11,15 +11,14 @@ import java.util.List;
 public class HibernateDao<T> implements Dao<T> {
 	private Session session;
 
-	public HibernateDao(Session session) {
+	HibernateDao(Session session) {
 		this.session = session;
 	}
 
 	@Override
-	public <T> T load(long id, Class<T> clazz) {
+	public <T> T load(Class<T> clazz, Serializable id) {
 		return session.get(clazz, id);
 	}
-
 	@Override
 	public List<T> getAll(Class<T> clazz) {
 		CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();

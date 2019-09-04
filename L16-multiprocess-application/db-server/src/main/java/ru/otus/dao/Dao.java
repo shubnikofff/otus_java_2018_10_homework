@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.List;
 
 public interface Dao<T> {
-	<T> T load(long id, Class<T> clazz);
+	<T> T load(Class<T> clazz, Serializable id);
 
 	List<T> getAll(Class<T> clazz);
 
