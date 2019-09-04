@@ -4,7 +4,9 @@ import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import ru.otus.application.configuration.ApplicationProperties;
 import ru.otus.application.service.DBService;
+import ru.otus.dao.Dao;
 import ru.otus.message.Message;
 import ru.otus.service.MessageWorker;
 import ru.otus.service.SocketWorker;
@@ -20,6 +22,8 @@ public class Application {
 	private static final int PERIOD_MS = 100;
 	private static final int SERVER_SOCKET_BACKLOG = 1;
 
+	private final ApplicationProperties applicationProperties;
+	private final Dao dao;
 	private final DBService dbService;
 	private final ExecutorService executorService;
 	private final int port;
@@ -28,10 +32,14 @@ public class Application {
 	private final ScheduledExecutorService scheduledExecutorService;
 
 	public Application(
+			ApplicationProperties applicationProperties,
+			Dao<ApplicationProperties.SystemAdmin> dao,
 			DBService dbService,
 			@Value("${port}") int port,
 			@Qualifier("loggerApplication") Logger logger
 	) {
+		this.applicationProperties = applicationProperties;
+		this.dao = dao;
 		this.dbService = dbService;
 		this.logger = logger;
 		this.port = port;
@@ -40,6 +48,7 @@ public class Application {
 	}
 
 	public void start() {
+		dao.save(applicationProperties.getSystemAdmin());
 		dbService.start();
 
 		CompletableFuture.supplyAsync(() -> {

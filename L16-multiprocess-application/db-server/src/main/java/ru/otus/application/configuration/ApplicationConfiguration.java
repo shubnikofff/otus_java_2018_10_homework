@@ -10,6 +10,7 @@ import ru.otus.application.service.DBService;
 import ru.otus.dao.Dao;
 import ru.otus.dao.HibernateDaoFactory;
 import ru.otus.model.Address;
+import ru.otus.model.Admin;
 import ru.otus.model.Phone;
 import ru.otus.model.User;
 
@@ -30,6 +31,6 @@ public class ApplicationConfiguration {
 
 	@Bean
 	Dao dao() {
-		return new HibernateDaoFactory(hibernateConfigurationPath).getDao(User.class, Address.class, Phone.class);
+		return new HibernateDaoFactory(hibernateConfigurationPath).getDao(User.class, Address.class, Phone.class, Admin.class);
 	}
 }
