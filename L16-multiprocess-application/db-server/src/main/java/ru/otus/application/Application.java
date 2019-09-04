@@ -8,6 +8,7 @@ import ru.otus.application.configuration.ApplicationProperties;
 import ru.otus.application.service.DBService;
 import ru.otus.dao.Dao;
 import ru.otus.message.Message;
+import ru.otus.model.Admin;
 import ru.otus.service.MessageWorker;
 import ru.otus.service.SocketWorker;
 
@@ -23,7 +24,7 @@ public class Application {
 	private static final int SERVER_SOCKET_BACKLOG = 1;
 
 	private final ApplicationProperties applicationProperties;
-	private final Dao dao;
+	private final Dao<Admin> dao;
 	private final DBService dbService;
 	private final ExecutorService executorService;
 	private final int port;
@@ -33,7 +34,7 @@ public class Application {
 
 	public Application(
 			ApplicationProperties applicationProperties,
-			Dao<ApplicationProperties.SystemAdmin> dao,
+			Dao<Admin> dao,
 			DBService dbService,
 			@Value("${port}") int port,
 			@Qualifier("loggerApplication") Logger logger
@@ -48,7 +49,7 @@ public class Application {
 	}
 
 	public void start() {
-		dao.save(applicationProperties.getSystemAdmin());
+		initDatabase();
 		dbService.start();
 
 		CompletableFuture.supplyAsync(() -> {
@@ -91,5 +92,10 @@ public class Application {
 			logger.error(e.getMessage());
 		}
 
+	}
+
+	private void initDatabase() {
+		final Admin admin = new Admin(applicationProperties.getSystemAdmin().getUsername(), applicationProperties.getSystemAdmin().getPassword());
+		dao.save(admin);
 	}
 }
