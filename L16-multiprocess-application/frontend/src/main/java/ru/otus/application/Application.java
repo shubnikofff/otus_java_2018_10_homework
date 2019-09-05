@@ -5,8 +5,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import ru.otus.message.Message;
-import ru.otus.message.PingRequest;
-import ru.otus.message.PingResponse;
 import ru.otus.service.MessageWorker;
 import ru.otus.service.SocketWorker;
 
@@ -59,7 +57,7 @@ public class Application {
 		}, executorService).thenAccept(this::createAndStartMessageWorker).thenRun(this::processInnerMessages);
 	}
 
-	private Message sendMessage(Message message) throws InterruptedException {
+	public Message sendMessage(Message message) throws InterruptedException {
 		final LinkedBlockingQueue<Message> responseQueue = new LinkedBlockingQueue<>(RESPONSE_QUEUE_CAPACITY);
 		responseMap.put(message.getId(), responseQueue);
 		messageWorker.putMessage(message);
@@ -84,7 +82,11 @@ public class Application {
 		messageWorker.start();
 	}
 
-	public PingResponse sendPing() throws InterruptedException {
-		return (PingResponse) sendMessage(new PingRequest(MESSAGE_ID_COUNTER.incrementAndGet(), id));
+	public String getId() {
+		return id;
+	}
+
+	public int generateMessageId() {
+		return MESSAGE_ID_COUNTER.incrementAndGet();
 	}
 }

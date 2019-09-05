@@ -4,7 +4,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import ru.otus.application.Application;
-import ru.otus.message.PingResponse;
+import ru.otus.message.AuthRequest;
+import ru.otus.message.AuthResponse;
+import ru.otus.message.Message;
 
 @Controller
 public class HelloController {
@@ -16,8 +18,10 @@ public class HelloController {
 
 	@GetMapping("/")
 	String greeting(Model model) throws InterruptedException {
-		final PingResponse response = application.sendPing();
-		model.addAttribute("response", response.getText());
+		Message request = new AuthRequest(application.generateMessageId(), application.getId(), "admin", "admin1");
+		AuthResponse response = (AuthResponse) application.sendMessage(request);
+		model.addAttribute("response", response.isAuthorized());
+
 		return "hello";
 	}
 }
