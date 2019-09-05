@@ -28,7 +28,7 @@ public class UserListQuery extends Query {
 		if (canMakeQuery(message)) {
 			final List<UserDto> userDtoList = dao.getAll(User.class).stream().map(user -> {
 				final List<String> phoneList = user.getPhones().stream().map(Phone::getNumber).collect(Collectors.toList());
-				return new UserDto(user.getName(), user.getAddress().toString(), phoneList);
+				return new UserDto(user.getName(),user.getAge(), user.getAddress().toString(), phoneList);
 			}).collect(Collectors.toList());
 			return new UserListResponse(message.getId(), applicationId, message.getFrom(), userDtoList);
 		}

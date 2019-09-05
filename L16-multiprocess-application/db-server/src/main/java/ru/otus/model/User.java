@@ -8,6 +8,12 @@ import java.util.List;
 @Entity
 @Table(name = "user")
 public class User implements Serializable {
+	public User(String name, int age, Address address, List<Phone> phones) {
+		this.name = name;
+		this.age = age;
+		this.address = address;
+		this.phones = phones;
+	}
 
 	public User() {
 		super();
