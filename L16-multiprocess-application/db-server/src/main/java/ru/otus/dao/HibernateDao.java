@@ -28,17 +28,13 @@ public class HibernateDao<T> implements Dao<T> {
 	}
 
 	@Override
-	public Serializable save(T object) {
-		Serializable id = null;
-
+	public void save(T object) {
 		try {
 			session.beginTransaction();
-			id = session.save(object);
+			session.saveOrUpdate(object);
 			session.getTransaction().commit();
 		} catch (Exception e) {
 			session.getTransaction().rollback();
 		}
-
-		return id;
 	}
 }

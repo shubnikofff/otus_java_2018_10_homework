@@ -8,5 +8,5 @@ public interface Dao<T> {
 
 	List<T> getAll(Class<T> clazz);
 
-	Serializable save(T object);
+	void save(T object);
 }
