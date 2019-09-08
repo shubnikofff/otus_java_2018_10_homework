@@ -14,8 +14,8 @@ public class DBService extends AbstractMessageProcessor {
 
 	public DBService(AuthQuery authQuery, UserListQuery userListQuery, SaveUserQuery saveUserQuery) {
 		query = authQuery;
-		query.setNext(userListQuery);
-		query.setNext(saveUserQuery);
+		authQuery.setNext(userListQuery);
+		userListQuery.setNext(saveUserQuery);
 	}
 
 	@Override
