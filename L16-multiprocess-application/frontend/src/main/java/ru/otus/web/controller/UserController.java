@@ -9,10 +9,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import ru.otus.application.Application;
-import ru.otus.dto.UserDto;
+import ru.otus.dto.CreateUserDto;
+import ru.otus.dto.LoginDto;
 import ru.otus.message.*;
-import ru.otus.web.form.CreateUserForm;
-import ru.otus.web.form.LoginForm;
 
 import java.util.Objects;
 
@@ -33,8 +32,8 @@ public class UserController {
 	}
 
 	@RequestMapping(value = "login", method = RequestMethod.POST, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-	String login(LoginForm loginForm) throws InterruptedException {
-		final Message authRequest = new AuthRequest(application.generateMessageId(), application.getId(), loginForm.getUsername(), loginForm.getPassword());
+	String login(LoginDto loginDto) throws InterruptedException {
+		final Message authRequest = new AuthRequest(application.generateMessageId(), application.getId(), loginDto);
 		final AuthResponse authResponse = (AuthResponse) application.sendMessage(authRequest);
 
 		if (authResponse.isAuthorized()) {
@@ -48,9 +47,8 @@ public class UserController {
 	}
 
 	@RequestMapping(value = "create", method = RequestMethod.POST, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-	String create(CreateUserForm userForm) throws InterruptedException {
-		final UserDto userDto = new UserDto(null, userForm.getName(), Integer.parseInt(userForm.getAge()), userForm.getAddress(), userForm.getPhones());
-		final SaveUserRequest message = new SaveUserRequest(application.generateMessageId(), application.getId(), userDto);
+	String create(CreateUserDto createUserDto) throws InterruptedException {
+		final SaveUserRequest message = new SaveUserRequest(application.generateMessageId(), application.getId(), createUserDto);
 		application.sendMessage(message);
 		return "redirect:/";
 	}

@@ -3,6 +3,7 @@ package ru.otus.application.service.query;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import ru.otus.dao.Dao;
+import ru.otus.dto.LoginDto;
 import ru.otus.message.AuthRequest;
 import ru.otus.message.AuthResponse;
 import ru.otus.message.Message;
@@ -22,8 +23,9 @@ public class AuthQuery extends Query {
 	public Message makeQuery(Message message) {
 		if (canMakeQuery(message)) {
 			AuthRequest request = (AuthRequest) message;
-			final Admin admin = dao.load(Admin.class, request.getUsername());
-			final boolean authorized = admin != null && admin.getPassword().equals(((AuthRequest) message).getPassword());
+			final LoginDto dto = request.getDto();
+			final Admin admin = dao.load(Admin.class, dto.getUsername());
+			final boolean authorized = admin != null && admin.getPassword().equals(dto.getPassword());
 			return new AuthResponse(message.getId(), applicationId, message.getFrom(), authorized);
 		}
 

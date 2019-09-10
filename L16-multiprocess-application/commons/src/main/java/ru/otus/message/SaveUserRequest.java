@@ -1,16 +1,16 @@
 package ru.otus.message;
 
-import ru.otus.dto.UserDto;
+import ru.otus.dto.CreateUserDto;
 
 public class SaveUserRequest extends Message {
-	private final UserDto userDto;
+	private final CreateUserDto dto;
 
-	public SaveUserRequest(int id, String from, UserDto userDto) {
+	public SaveUserRequest(int id, String from, CreateUserDto dto) {
 		super(id, from, null, SaveUserRequest.class);
-		this.userDto = userDto;
+		this.dto = dto;
 	}
 
-	public UserDto getUserDto() {
-		return userDto;
+	public CreateUserDto getDto() {
+		return dto;
 	}
 }

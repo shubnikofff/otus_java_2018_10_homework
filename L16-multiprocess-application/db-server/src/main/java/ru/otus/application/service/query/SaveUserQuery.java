@@ -3,7 +3,7 @@ package ru.otus.application.service.query;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import ru.otus.dao.Dao;
-import ru.otus.dto.UserDto;
+import ru.otus.dto.CreateUserDto;
 import ru.otus.message.Message;
 import ru.otus.message.OperationSuccess;
 import ru.otus.message.SaveUserRequest;
@@ -28,7 +28,7 @@ public class SaveUserQuery extends Query {
 	public Message makeQuery(Message message) {
 		if (canMakeQuery(message)) {
 			SaveUserRequest request = (SaveUserRequest) message;
-			final UserDto dto = request.getUserDto();
+			final CreateUserDto dto = request.getDto();
 			final List<Phone> phoneList = dto.getPhones().stream().map(Phone::new).collect(Collectors.toList());
 			dao.save(new User(dto.getName(), dto.getAge(), new Address(dto.getAddress()), phoneList));
 			return new OperationSuccess(message.getId(), applicationId, message.getFrom());

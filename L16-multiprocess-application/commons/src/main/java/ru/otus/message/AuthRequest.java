@@ -1,20 +1,16 @@
 package ru.otus.message;
 
+import ru.otus.dto.LoginDto;
+
 public class AuthRequest extends Message {
-	private final String username;
-	private final String password;
+	private final LoginDto dto;
 
-	public AuthRequest(int id, String from, String username, String password) {
+	public AuthRequest(int id, String from, LoginDto dto) {
 		super(id, from, null, AuthRequest.class);
-		this.username = username;
-		this.password = password;
+		this.dto = dto;
 	}
 
-	public String getUsername() {
-		return username;
-	}
-
-	public String getPassword() {
-		return password;
+	public LoginDto getDto() {
+		return dto;
 	}
 }
