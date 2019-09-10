@@ -1,14 +1,14 @@
-package ru.otus.web.form;
+package ru.otus.dto;
 
 import java.util.List;
 
-public class CreateUserForm {
+public class CreateUserDto {
 	private final String name;
-	private final String age;
+	private final int age;
 	private final String address;
 	private final List<String> phones;
 
-	public CreateUserForm(String name, String age, String address, List<String> phones) {
+	public CreateUserDto(String name, int age, String address, List<String> phones) {
 		this.name = name;
 		this.age = age;
 		this.address = address;
@@ -19,7 +19,7 @@ public class CreateUserForm {
 		return name;
 	}
 
-	public String getAge() {
+	public int getAge() {
 		return age;
 	}
 

@@ -1,10 +1,10 @@
-package ru.otus.web.form;
+package ru.otus.dto;
 
-public class LoginForm {
+public class LoginDto {
 	private final String username;
 	private final String password;
 
-	public LoginForm(String username, String password) {
+	public LoginDto(String username, String password) {
 		this.username = username;
 		this.password = password;
 	}
