@@ -16,6 +16,10 @@ public class Admin implements Serializable {
 	@Column(name = "password")
 	private String password;
 
+	public Admin() {
+		super();
+	}
+
 	public Admin(String username, String password) {
 		this.username = username;
 		this.password = password;
