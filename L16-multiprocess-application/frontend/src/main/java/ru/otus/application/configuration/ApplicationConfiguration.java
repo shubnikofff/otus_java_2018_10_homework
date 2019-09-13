@@ -23,6 +23,7 @@ public class ApplicationConfiguration extends AnnotationConfigWebApplicationCont
 		registrationBean.addUrlPatterns("/");
 		registrationBean.addUrlPatterns("/list");
 		registrationBean.addUrlPatterns("/create");
+		registrationBean.addUrlPatterns("/create.html");
 		return registrationBean;
 	}
 }
