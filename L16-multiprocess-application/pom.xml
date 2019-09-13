@@ -28,6 +28,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <spring.version>5.1.9.RELEASE</spring.version>
         <spring-boot.version>2.1.7.RELEASE</spring-boot.version>
+        <mysql-connector.version>8.0.17</mysql-connector.version>
     </properties>
 
 </project>
