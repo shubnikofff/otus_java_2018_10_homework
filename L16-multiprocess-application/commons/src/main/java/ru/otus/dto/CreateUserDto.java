@@ -1,6 +1,7 @@
 package ru.otus.dto;
 
 import java.util.List;
+import java.util.Optional;
 
 public class CreateUserDto {
 	private final String name;
@@ -8,9 +9,9 @@ public class CreateUserDto {
 	private final String address;
 	private final List<String> phones;
 
-	public CreateUserDto(String name, int age, String address, List<String> phones) {
+	public CreateUserDto(String name, Integer age, String address, List<String> phones) {
 		this.name = name;
-		this.age = age;
+		this.age = Optional.ofNullable(age).orElse(0);
 		this.address = address;
 		this.phones = phones;
 	}
