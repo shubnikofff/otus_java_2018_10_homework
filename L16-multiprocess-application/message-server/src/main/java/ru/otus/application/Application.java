@@ -22,7 +22,7 @@ public class Application {
 	private static final int INITIAL_DELAY_MS = 0;
 	private static final int PERIOD_MS = 100;
 	private static final String HOST = "localhost";
-	private static final String ID = "MS";
+	private static final String ID = "MessageServer";
 
 	private final ApplicationProperties applicationProperties;
 	private final Logger logger;
