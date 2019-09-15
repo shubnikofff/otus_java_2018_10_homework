@@ -38,7 +38,7 @@ public class UserController {
 			return new ResponseEntity(HttpStatus.NOT_IMPLEMENTED);
 		}
 
-		final UserListResponse userListResponse = (UserListResponse) application.sendMessage(request);
+		final UserListResponse userListResponse = (UserListResponse) response;
 		model.addAttribute("users", userListResponse.getUserDtoList());
 		return "list";
 	}
