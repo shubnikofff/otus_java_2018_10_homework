@@ -16,7 +16,7 @@ public class HibernateDao<T> implements Dao<T> {
 	}
 
 	@Override
-	public <T> T load(Class<T> clazz, Serializable id) {
+	public <T> T load(Serializable id, Class<T> clazz) {
 		return session.get(clazz, id);
 	}
 	@Override
@@ -28,13 +28,17 @@ public class HibernateDao<T> implements Dao<T> {
 	}
 
 	@Override
-	public void save(T object) {
+	public Serializable save(T object) {
+		Serializable id = null;
+
 		try {
 			session.beginTransaction();
-			session.saveOrUpdate(object);
+			id = session.save(object);
 			session.getTransaction().commit();
 		} catch (Exception e) {
 			session.getTransaction().rollback();
 		}
+
+		return id;
 	}
 }

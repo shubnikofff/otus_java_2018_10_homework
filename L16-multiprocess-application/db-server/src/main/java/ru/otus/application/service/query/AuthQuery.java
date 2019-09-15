@@ -24,7 +24,7 @@ public class AuthQuery extends Query {
 		if (canMakeQuery(message)) {
 			AuthRequest request = (AuthRequest) message;
 			final LoginDto dto = request.getDto();
-			final Admin admin = dao.load(Admin.class, dto.getUsername());
+			final Admin admin = dao.load(dto.getUsername(), Admin.class);
 			final boolean authorized = admin != null && admin.getPassword().equals(dto.getPassword());
 			return new AuthResponse(message.getId(), applicationId, message.getFrom(), authorized);
 		}
