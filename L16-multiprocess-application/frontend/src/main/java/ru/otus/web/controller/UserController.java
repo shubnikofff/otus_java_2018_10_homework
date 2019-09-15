@@ -1,6 +1,8 @@
 package ru.otus.web.controller;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,18 +26,37 @@ public class UserController {
 	}
 
 	@GetMapping("/")
-	String userList(Model model) throws InterruptedException {
+	Object userList(Model model) throws InterruptedException {
 		final UserListRequest request = new UserListRequest(application.generateMessageId(), application.getId());
-		final UserListResponse response = (UserListResponse) application.sendMessage(request);
-		model.addAttribute("users", response.getUserDtoList());
+		final Message response = application.sendMessage(request);
+
+		if (response instanceof ServiceUnavailable) {
+			return new ResponseEntity(HttpStatus.SERVICE_UNAVAILABLE);
+		}
+
+		if (response instanceof UnsupportedRequest) {
+			return new ResponseEntity(HttpStatus.NOT_IMPLEMENTED);
+		}
+
+		final UserListResponse userListResponse = (UserListResponse) application.sendMessage(request);
+		model.addAttribute("users", userListResponse.getUserDtoList());
 		return "list";
 	}
 
 	@RequestMapping(value = "login", method = RequestMethod.POST, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-	String login(LoginDto loginDto) throws InterruptedException {
-		final Message authRequest = new AuthRequest(application.generateMessageId(), application.getId(), loginDto);
-		final AuthResponse authResponse = (AuthResponse) application.sendMessage(authRequest);
+	Object login(LoginDto loginDto) throws InterruptedException {
+		final Message request = new AuthRequest(application.generateMessageId(), application.getId(), loginDto);
+		final Message response = application.sendMessage(request);
 
+		if (response instanceof ServiceUnavailable) {
+			return new ResponseEntity(HttpStatus.SERVICE_UNAVAILABLE);
+		}
+
+		if (response instanceof UnsupportedRequest) {
+			return new ResponseEntity(HttpStatus.NOT_IMPLEMENTED);
+		}
+
+		final AuthResponse authResponse = (AuthResponse) response;
 		if (authResponse.isAuthorized()) {
 			((ServletRequestAttributes) Objects.requireNonNull(RequestContextHolder.getRequestAttributes()))
 					.getRequest()
@@ -47,9 +68,18 @@ public class UserController {
 	}
 
 	@RequestMapping(value = "create", method = RequestMethod.POST, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-	String create(CreateUserDto createUserDto) throws InterruptedException {
+	Object create(CreateUserDto createUserDto) throws InterruptedException {
 		final SaveUserRequest message = new SaveUserRequest(application.generateMessageId(), application.getId(), createUserDto);
-		application.sendMessage(message);
+		final Message response = application.sendMessage(message);
+
+		if (response instanceof ServiceUnavailable) {
+			return new ResponseEntity(HttpStatus.SERVICE_UNAVAILABLE);
+		}
+
+		if (response instanceof UnsupportedRequest) {
+			return new ResponseEntity(HttpStatus.NOT_IMPLEMENTED);
+		}
+
 		return "redirect:/";
 	}
 }
