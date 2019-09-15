@@ -6,6 +6,7 @@ import ru.otus.application.service.query.Query;
 import ru.otus.application.service.query.SaveUserQuery;
 import ru.otus.application.service.query.UserListQuery;
 import ru.otus.message.Message;
+import ru.otus.message.UnsupportedRequest;
 import ru.otus.service.AbstractMessageProcessor;
 
 @Service
@@ -20,6 +21,7 @@ public class DBService extends AbstractMessageProcessor {
 
 	@Override
 	protected Message processMessage(Message message) {
-		return query.makeQuery(message);
+		final Message result = query.makeQuery(message);
+		return result == null ? new UnsupportedRequest(message.getId(), message.getTo(), message.getFrom()) : result;
 	}
 }
