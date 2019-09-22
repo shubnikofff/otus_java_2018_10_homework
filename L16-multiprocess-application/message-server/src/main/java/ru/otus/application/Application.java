@@ -16,6 +16,8 @@ import java.net.ConnectException;
 import java.net.Socket;
 import java.util.Map;
 import java.util.concurrent.*;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 @Service
 public class Application {
@@ -54,14 +56,25 @@ public class Application {
 	}
 
 	private void startClient(ApplicationProperties.Client client) {
-		CompletableFuture.supplyAsync(() -> {
+		CompletableFuture.supplyAsync(getProcessSupplier(client), executorService)
+				.thenApply(getSocketSupplier(client))
+				.thenApply(getMessageWorkerSupplier(client))
+				.thenAccept(this::putMessageToRoutingServiceJob);
+	}
+
+	private Supplier<Process> getProcessSupplier(ApplicationProperties.Client client) {
+		return () -> {
 			try {
 				return processStarter.start(client.getRunCommand());
 			} catch (IOException e) {
 				logger.error(e.getMessage());
 				throw new CompletionException(e);
 			}
-		}, executorService).thenApply((process) -> {
+		};
+	}
+
+	private Function<Process, Socket> getSocketSupplier(ApplicationProperties.Client client) {
+		return process -> {
 			try {
 				if (!process.isAlive()) {
 					throw new Exception(client.getId() + " is dead");
@@ -81,18 +94,26 @@ public class Application {
 				logger.error(e.getMessage());
 				throw new CompletionException(e);
 			}
-		}).thenAccept((socket -> {
+		};
+	}
+
+	private Function<Socket, MessageWorker> getMessageWorkerSupplier(ApplicationProperties.Client client) {
+		return socket -> {
 			MessageWorker messageWorker = new SocketWorker(socket);
 			messageWorker.start();
 			messageWorkerMap.put(client.getId(), messageWorker);
-			scheduledExecutorService.scheduleAtFixedRate(() -> {
-				try {
-					routingService.putMessage(messageWorker.getMessage());
-				} catch (InterruptedException e) {
-					logger.error(e.getMessage());
-				}
-			}, INITIAL_DELAY_MS, PERIOD_MS, TimeUnit.MILLISECONDS);
-		}));
+			return messageWorker;
+		};
+	}
+
+	private void putMessageToRoutingServiceJob(MessageWorker messageWorker) {
+		scheduledExecutorService.scheduleAtFixedRate(() -> {
+			try {
+				routingService.putMessage(messageWorker.getMessage());
+			} catch (InterruptedException e) {
+				logger.error(e.getMessage());
+			}
+		}, INITIAL_DELAY_MS, PERIOD_MS, TimeUnit.MILLISECONDS);
 	}
 
 	private void sendOutgoingMessage() {
