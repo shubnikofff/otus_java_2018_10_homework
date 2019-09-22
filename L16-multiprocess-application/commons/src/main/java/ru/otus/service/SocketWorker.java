@@ -44,7 +44,7 @@ public class SocketWorker implements MessageWorker {
 	}
 
 	@Override
-	public void putMessage(Message message) throws InterruptedException {
+	public void putMessage(Message message) throws InterruptedException, ClassCastException, NullPointerException, IllegalArgumentException {
 		outputQueue.put(message);
 	}
 

@@ -20,13 +20,13 @@ public abstract class AbstractMessageProcessor implements MessageWorker {
 			try {
 				Message result = processMessage(inputQueue.take());
 				outputQueue.put(result);
-			} catch (InterruptedException e) {
+			} catch (Exception e) {
 				LOGGER.log(Level.SEVERE, e.getMessage());
 			}
 		}, INITIAL_DELAY_MS, PERIOD_MS, TimeUnit.MILLISECONDS);
 	}
 
-	public void putMessage(Message message) throws InterruptedException {
+	public void putMessage(Message message) throws InterruptedException, ClassCastException, NullPointerException, IllegalArgumentException {
 		inputQueue.put(message);
 	}
 

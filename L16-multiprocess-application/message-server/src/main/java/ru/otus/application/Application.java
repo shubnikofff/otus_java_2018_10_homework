@@ -126,7 +126,7 @@ public class Application {
 				messageWorker.putMessage(message);
 				logger.info("Send message " + message.getClass().getSimpleName() + " from " + message.getFrom() + " to " + message.getTo());
 			}
-		} catch (InterruptedException e) {
+		} catch (Exception e) {
 			logger.error(e.getMessage());
 		}
 	}
